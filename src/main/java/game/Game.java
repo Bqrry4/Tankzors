@@ -1,7 +1,10 @@
 package game;
 
+import com.sun.tools.javac.Main;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.opengl.GL;
+
+import javax.swing.*;
 
 import static java.sql.Types.NULL;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
@@ -9,65 +12,52 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
 public class Game implements Runnable {
-    private long window;
-
+    private Window MainWindow;
 
     public Game(int width, int height, String title)
     {
+        Window.InitProperties();
 
+        MainWindow = new Window(width, height, title);
 
-        GLFWErrorCallback.createPrint(System.err).set();
+        MainWindow.BindKeyCallBack(InputHandler::keyUpdate);
 
-        if ( !glfwInit() )
-            throw new IllegalStateException("Unable to initialize GLFW");
-
-        glfwDefaultWindowHints();
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
-
-        window = glfwCreateWindow(width, height, title, NULL, NULL);
-        if ( window == NULL )
-            throw new RuntimeException("Failed to create the GLFW window");
-
-        glfwSetKeyCallback(window, InputHandler::keyUpdate);
-
-        glfwMakeContextCurrent(window);
-        glfwSwapInterval(1); //V-sync On
-
-        glfwShowWindow(window);
-        GL.createCapabilities();
+        GL.createCapabilities(); //Init OpenGL
     }
 
     @Override
     public void run()
     {
-        while(!glfwWindowShouldClose(window))
+
+        while(!MainWindow.ShouldClose())
         {
-            glfwPollEvents();
+            Update();
 
-            glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
+            Render();
 
-            if(InputHandler.keyState(GLFW_KEY_UP))
-                System.out.println("SS");
-
-            glfwSwapBuffers(window);
+            MainWindow.SwapRenderBuffers();
         }
 
-        glfwFreeCallbacks(window);
-        glfwDestroyWindow(window);
+        MainWindow.Destroy();
+    }
 
+    public void Clean()
+    {
         glfwTerminate();
         glfwSetErrorCallback(null).free();
     }
 
-    private void update()
+    private void Update()
     {
-
+        glfwPollEvents();
     }
 
-    private void render()
+    private void Render()
     {
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f); //Clear screen
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        //Render stuff there
 
     }
 
