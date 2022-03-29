@@ -4,5 +4,5 @@ import renderer.Shader;
 
 public interface Renderable {
 
-    public void render(Shader shader);
+    public void render();
 }

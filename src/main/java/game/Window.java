@@ -56,10 +56,14 @@ public class Window {
     }
 
 
-
     public void BindKeyCallBack(org.lwjgl.glfw.GLFWKeyCallbackI cbfun )
     {
         glfwSetKeyCallback(window, cbfun);
+    }
+
+    public void BindResizeCallback(org.lwjgl.glfw.GLFWFramebufferSizeCallbackI cbfun)
+    {
+        glfwSetFramebufferSizeCallback(window, cbfun);
     }
 
     public void ProcessEvents()

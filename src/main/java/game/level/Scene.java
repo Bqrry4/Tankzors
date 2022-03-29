@@ -1,48 +1,54 @@
 package game.level;
 
+import game.layer.Layer;
+import game.layer.TileLayer;
 import game.object.GameObjects;
 import game.object.Player;
-import renderer.Mesh;
-import renderer.Shader;
-import renderer.Texture;
+import org.joml.Vector2i;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Scene {
-        //List of Layers
-        //List of Objects
+
+    //Size of the Scene
+    private final Vector2i size = new Vector2i(100);
+    //List of Objects
     List<GameObjects> objectList = new ArrayList<GameObjects>();
+    //List of Layers
+    List<Layer> layerList = new ArrayList<Layer>();
+
 
     public Scene()
     {
-        float vertices[] = {
-                // positions          // colors           // texture coords
-                0.5f,  0.5f,   0f, 0f,   // top right
-                0.5f, -0.5f, 0f, 1f,   // bottom right
-                -0.5f, -0.5f, 1f, 1f,   // bottom left
-                -0.5f,  0.5f,  1f, 0f    // top left
-        };
 
-        int[] indices = {  // note that we start from 0!
-                0, 1, 3,   // first triangle
-                3, 1, 2    // second triangle
-        };
-
-
-        Mesh mesh2 = new Mesh(vertices, indices);
-
-        Texture tex2 = new Texture("assets/tanks/cir.jpg");
-
-
-        objectList.add(new Player(mesh2, tex2));
     }
 
-    public void Process(Shader shader)
+    public void Load()
+    {
+        objectList.add(new Player(0, 0, 24, 24));
+
+        int[][] map = {
+                {102,102,102,102,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,4,4,4,4,36},
+                {35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,4,4,4,4,4,4},
+                {35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,35,4,4,4,4,4,4},
+                {35,35,35,35,102,35,35,35,35,102,102,102,35,35,35,35,35,35,35,35,35,35,35,4,4,4,4,4,4,4},
+                {35,35,102,35,102,35,35,35,35,102,102,102,35,35,35,35,35,35,35,35,35,35,35,4,4,4,4,4,4,4}
+        };
+        layerList.add(new TileLayer(20, 20, map));
+    }
+
+    public void Process()
     {
         Update();
 
-        Render(shader);
+        Render();
+    }
+
+    public void UpdateSize(int w, int h)
+    {
+        size.x = w;
+        size.y = h;
     }
 
 
@@ -55,13 +61,19 @@ public class Scene {
         }
     }
 
-    private void Render(Shader shader)
+    private void Render()
     {
         //then render them
         //update layers and objects
+
+        for(Layer layer : layerList)
+        {
+            layer.render();
+        }
+
         for(GameObjects object : objectList)
         {
-            object.render(shader);
+            object.render();
         }
     }
 }

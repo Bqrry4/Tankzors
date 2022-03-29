@@ -1,11 +1,15 @@
 package renderer;
 
+import org.joml.Matrix4f;
+import org.lwjgl.system.MemoryStack;
+
 import java.io.IOException;
-import java.nio.IntBuffer;
+import java.nio.FloatBuffer;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.glShaderSource;
 
 public class Shader {
     private final int shader;
@@ -123,10 +127,17 @@ public class Shader {
     }
 
 
-    public void SetUniform1f(String Identifier, int value)
+    public void SetUniform(String Identifier, int value)
     {
         glUniform1i(glGetUniformLocation(shader, Identifier), value);
     }
 
+    public void SetUniform(String Identifier, Matrix4f value) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            FloatBuffer buffer = stack.mallocFloat(16);
+            value.get(buffer);
+            glUniformMatrix4fv(glGetUniformLocation(shader, Identifier), false, buffer);
+        }
+    }
 
 }

@@ -3,7 +3,6 @@ package game.object;
 import game.interfaces.Renderable;
 import game.interfaces.Updatable;
 import org.joml.Vector2f;
-import renderer.Shader;
 import renderer.Mesh;
 import renderer.Texture;
 
