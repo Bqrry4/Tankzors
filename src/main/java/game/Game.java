@@ -21,13 +21,14 @@ public class Game {
         MainWindow = new Window(width, height, title);
 
         MainWindow.BindKeyCallBack(InputHandler::keyUpdate);
-        MainWindow.BindResizeCallback(Renderer::framebuffer_resize);
+        MainWindow.BindResizeCallback(Window::framebuffer_resize);
 
         Renderer.Instance().addMesh(new Mesh());
         Renderer.Instance().addShader(new Shader("assets/shaders/default.glsl"));
         Renderer.Instance().addShader(new Shader("assets/shaders/default2.glsl"));
         Renderer.Instance().addTexture(new Texture("assets/map/ground.png")); //0
         Renderer.Instance().addTexture(new Texture("assets/tanks/tanks.png")); //1
+        Renderer.Instance().addTexture(new Texture("assets/map/walls.png")); //2
 
         Renderer.Instance().InitBatch();
         scene = new Scene();
@@ -38,8 +39,6 @@ public class Game {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glClearColor(1f, 1f, 1f, 1.0f); //Clear screen
-
-
     }
 
 
@@ -48,13 +47,11 @@ public class Game {
 
         Menu menu = new Menu();
 
-
-
-
+        //Game Loop
         while(!MainWindow.ShouldClose())
         {
             MainWindow.ProcessEvents();
-
+            WindowTimer.Instance().Ticks();
 
 /*            DefaultShader.SetUniform1f("u_texture", 0);
             mesh.Bind();
@@ -70,8 +67,6 @@ public class Game {
             {
                 scene.Process();
             }
-
-            glBindVertexArray(0);
 
             MainWindow.SwapRenderBuffers();
         }

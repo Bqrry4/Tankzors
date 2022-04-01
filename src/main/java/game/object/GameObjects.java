@@ -1,21 +1,29 @@
 package game.object;
 
+import auxiliar.Direction;
 import game.interfaces.Renderable;
 import game.interfaces.Updatable;
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 import renderer.Mesh;
 import renderer.Texture;
 
 public abstract class GameObjects implements Renderable, Updatable {
 
-    protected Mesh mesh;
-    protected Texture texture;
-    private final Vector2f position;
+    protected Vector4f hitbox;
+
+    Direction direction;
 
     public GameObjects()
+    {}
+
+    public Direction Direction()
     {
-        this.position = new Vector2f(0, 0);
+        return direction;
     }
 
-
+    public Vector4f getHitbox()
+    {
+        return hitbox;
+    }
 }

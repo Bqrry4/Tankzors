@@ -6,6 +6,8 @@ import static org.lwjgl.glfw.GLFW.*;
 
 public class InputHandler //
 {
+    //Binded only to one window
+
     private static char keyMap;
 
     public static void keyUpdate(long window, int key, int scancode, int action, int mods)

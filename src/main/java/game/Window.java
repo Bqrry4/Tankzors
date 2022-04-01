@@ -11,7 +11,6 @@ import static org.lwjgl.opengl.GL11.*;
 public class Window {
     private final long window;
 
-
     public static void InitProperties()
     {
         GLFWErrorCallback.createPrint(System.err).set(); //Set error callback to standart error output
@@ -81,5 +80,10 @@ public class Window {
     public boolean ShouldClose()
     {
         return glfwWindowShouldClose(window);
+    }
+
+    public static void framebuffer_resize(long window, int width, int height)
+    {
+        glViewport(0, 0, width, height);
     }
 }

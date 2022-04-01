@@ -51,7 +51,7 @@ public class Renderer //Probably Singleton
     }
 
 
-    private final int bufferSize = 4096 * Float.BYTES; //~16kB
+    private final int bufferSize = 16384 * Float.BYTES; //~65kB
     private ByteBuffer vertices;
     private int numVertices = 0;
     private boolean isDrawing;
@@ -88,6 +88,9 @@ public class Renderer //Probably Singleton
     }
     public void beginBatching() {
 
+        isDrawing = true;
+        numVertices = 0;
+
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         vertices = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY, vertices.capacity(), vertices);
     }
@@ -100,9 +103,6 @@ public class Renderer //Probably Singleton
             vertices.flip();
             shaderList.get(0).use();
             shaderList.get(0).SetUniform(transformUniform, mx);
-            shaderList.get(0).SetUniform(textureUniform, 0);
-            textureList.get(0).Bind(0);
-
 
             glBindVertexArray(vao);
 
@@ -120,7 +120,7 @@ public class Renderer //Probably Singleton
 
         /* Calculate Texture coordinates */
         float s1 = srcRect.x / textureList.get(texID).Width();
-        float t1 = srcRect.y / textureList.get(texID).Height();
+        float t1 =  srcRect.y / textureList.get(texID).Height();
         float s2 = (srcRect.x + srcRect.z) / textureList.get(texID).Width();
         float t2 = (srcRect.y + srcRect.w) / textureList.get(texID).Height();
 
@@ -130,17 +130,32 @@ public class Renderer //Probably Singleton
         float x2 = (destRect.x + destRect.z) / Settings.getWidth() - 1f;
         float y2 = (destRect.y)* -1 / Settings.getHeigth() + 1f;
 
-         //Put data into buffer
+
+
+
+        //Put data into buffer
+        vertices.putFloat(x1).putFloat(y1).putFloat(s1).putFloat(t2);
+        vertices.putFloat(x1).putFloat(y2).putFloat(s1).putFloat(t1);
+        vertices.putFloat(x2).putFloat(y2).putFloat(s2).putFloat(t1);
+
+        vertices.putFloat(x1).putFloat(y1).putFloat(s1).putFloat(t2);
+        vertices.putFloat(x2).putFloat(y1).putFloat(s2).putFloat(t2);
+        vertices.putFloat(x2).putFloat(y2).putFloat(s2).putFloat(t1);
+
+/*         //Put data into buffer
         vertices.putFloat(x1).putFloat(y1).putFloat(s1).putFloat(t1);
         vertices.putFloat(x1).putFloat(y2).putFloat(s1).putFloat(t2);
         vertices.putFloat(x2).putFloat(y2).putFloat(s2).putFloat(t2);
 
         vertices.putFloat(x1).putFloat(y1).putFloat(s1).putFloat(t1);
         vertices.putFloat(x2).putFloat(y2).putFloat(s2).putFloat(t2);
-        vertices.putFloat(x2).putFloat(y1).putFloat(s2).putFloat(t1);
+        vertices.putFloat(x2).putFloat(y1).putFloat(s2).putFloat(t1);*/
 
         //* Increment with number of added vertices
         numVertices += 6;
+
+        shaderList.get(0).SetUniform(textureUniform, 0);
+        textureList.get(texID).Bind(0);
 
     }
 
@@ -186,13 +201,6 @@ public class Renderer //Probably Singleton
     {
 
     }
-
-    public static void framebuffer_resize(long window, int width, int height)
-    {
-        glViewport(0, 0, width, height);
-    }
-
-
 
 
 }

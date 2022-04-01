@@ -4,7 +4,7 @@ public class Main {
 
     public static void main(String[] args)
     {
-        Game game = new Game(1920,1080,"Tankzors");
+        Game game = new Game(600,800,"Tankzors");
         game.run();
     }
 }
