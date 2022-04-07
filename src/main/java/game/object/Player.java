@@ -1,6 +1,7 @@
 package game.object;
 
 import Managers.Renderer;
+import renderer.TextureMap;
 import auxiliar.Direction;
 import game.InputHandler;
 import game.WindowTimer;
@@ -11,6 +12,9 @@ import org.joml.Vector4f;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Player extends GameObjects{
+
+    TextureMap tex;
+    int RegionID;
 
     private Vector2f targetPosition;
 
@@ -34,8 +38,10 @@ public class Player extends GameObjects{
     int vt = 50;
 
 
-    public Player(int x, int y, int w, int h, Direction direction)
+    public Player(TextureMap tex, int RegionID, int x, int y, int w, int h, Direction direction)
     {
+        this.tex = tex;
+        this.RegionID = RegionID;
         hitbox = new Vector4f(x, y, w, h);
         targetPosition = new Vector2f(x, y);
         this.direction = direction;
@@ -50,9 +56,13 @@ public class Player extends GameObjects{
     public void render() {
 /*        Renderer.Instance().DrawObject(0, 0, hitbox, mx);*/
 
-        Renderer.Instance().beginBatching();
+        Renderer.Instance().Draw(tex, RegionID,new Vector4f(new float[]{hitbox.z * (int)frame , 0, 24, 24}), new Vector4f(new float[]{hitbox.x*4 , hitbox.y*4, 24*4, 24*4} ));
+
+
+
+/*        Renderer.Instance().beginBatching();
         Renderer.Instance().DrawBatching(1, new Vector4f(new float[]{hitbox.z * (int)frame , 0, 24, 24}), new Vector4f(new float[]{hitbox.x*4 , hitbox.y*4, 24*4, 24*4}));
-        Renderer.Instance().endBatching(0, 0, mx);
+        Renderer.Instance().endBatching(0, 0, mx);*/
 
 /*        shader.SetUniform("transform", mx);
 
@@ -64,6 +74,7 @@ public class Player extends GameObjects{
 
     private void Movement()
     {
+        //If in animation
         float sign = Math.signum(toFrame - frame);
         if(sign != 0)
         {
@@ -86,11 +97,13 @@ public class Player extends GameObjects{
         int sg = desired.value - direction.value;
         if(sg != 0)
         {
-            toFrame = sg * 4;
+            toFrame = sg * 4 + frame;
         }
 
         //0 -> 1 = 1
         // 0 -> 3 = 3 -> -1
+
+        //3 -> 0 = -3
 
         //Move to target position
         sign = Math.signum(targetPosition.x - hitbox.x);
@@ -119,6 +132,8 @@ public class Player extends GameObjects{
             return;
         }
 
+
+        //Recieving input fot desired later actions
         if(InputHandler.keyState(GLFW_KEY_UP))
         {
             if(direction == Direction.Up && !collideFlag)

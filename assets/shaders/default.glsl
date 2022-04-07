@@ -3,14 +3,14 @@
 layout (location = 0) in vec2 Position;
 layout (location = 1) in vec2 texCoord;
 
-uniform mat4 projectionMatrix;
+uniform mat4 projection;
 uniform mat4 transform;
 
 out vec2 outTexCoord;
 
 void main()
 {
-    gl_Position = transform * vec4(Position, 0.0, 1.0);
+    gl_Position = vec4(Position, 0.0, 1.0);
     outTexCoord = texCoord;
 }
 

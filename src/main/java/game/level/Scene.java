@@ -1,8 +1,10 @@
 package game.level;
 
-import Managers.Collision;
+import Managers.Renderer;
+import Managers.ResourceManager;
+import renderer.TextureMap;
+import auxiliar.TextureRegion;
 import game.layer.Layer;
-import game.layer.TileLayer;
 import auxiliar.Direction;
 import game.object.GameObjects;
 import game.object.Player;
@@ -28,7 +30,21 @@ public class Scene {
 
     public void Load()
     {
-        objectList.add(new Player(18, 18, 24, 24, Direction.Down));
+
+        TextureMap textureMap = new TextureMap();
+        textureMap.setTexture(ResourceManager.Instance().GetTexture("tanks"));
+
+        TextureRegion[] Indices = {
+            new TextureRegion(0, 0, 384, 24),
+                new TextureRegion(0, 24, 384, 24),
+                new TextureRegion(0, 48, 384, 24),
+                new TextureRegion(0, 72, 384, 24),
+                new TextureRegion(0, 96, 384, 28)
+        };
+        textureMap.setIndices(Indices);
+
+
+        objectList.add(new Player(textureMap,0, 18, 18, 24, 24, Direction.Down));
 
         int[][] map = new int[][] {
                 {1,2,2,3,1,5,4,6,3,3,4,4,2,3,1,4},
@@ -55,7 +71,7 @@ public class Scene {
                 {2,3,5,2,4,5,5,6,2,1,5,6,1,1,3,4}
 
         };
-        layerList.add(new TileLayer(0, 20, 20, map));
+//        layerList.add(new TileLayer(0, 20, 20, map));
       int[][] map2 = {
               {217,217,218,217,217,218,217,218,218,217,218,218,218,217,218,217},
               {218,0,0,0,0,0,0,0,0,218,217,217,217,218,217,217},
@@ -80,7 +96,7 @@ public class Scene {
               {218,0,0,0,0,0,217,0,0,0,0,0,0,0,0,217},
               {218,217,217,217,217,217,218,218,218,217,218,217,217,218,218,217}
         };
-        layerList.add(new TileLayer(2, 20, 20, map2));
+//        layerList.add(new TileLayer(2, 20, 20, map2));
     }
 
     public void Process()
@@ -106,7 +122,7 @@ public class Scene {
         }
 
         //Collision
-        Collision.detect((Player) objectList.get(0), (TileLayer) layerList.get(1));
+//        Collision.detect((Player) objectList.get(0), (TileLayer) layerList.get(1));
 
     }
 
@@ -115,14 +131,21 @@ public class Scene {
         //then render them
         //update layers and objects
 
+        ResourceManager.Instance().GetTexture("tanks").Bind(0);
+
         for(Layer layer : layerList)
         {
             layer.render();
         }
+        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"));
+
+        ResourceManager.Instance().GetTexture("tanks").Bind(0);
 
         for(GameObjects object : objectList)
         {
             object.render();
         }
+
+        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"));
     }
 }

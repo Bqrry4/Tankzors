@@ -31,10 +31,10 @@ public class TileLayer extends Layer {
                 
                 int column = TileIdMap[id][jd] % 27 - 1;
                 int row = TileIdMap[id][jd] / 27;
-                Renderer.Instance().DrawBatching(texID, new Vector4f(new float[]{tileW * column, tileH * row, tileW, tileH}), new Vector4f(new float[]{jd * tileW * 4, id * tileH * 4, tileW * 4, tileH * 4 }));
+//                Renderer.Instance().DrawBatching(texID, new Vector4f(new float[]{tileW * column, tileH * row, tileW, tileH}), new Vector4f(new float[]{jd * tileW * 4, id * tileH * 4, tileW * 4, tileH * 4 }));
             }
         }
-        Renderer.Instance().endBatching(0, 0, new Matrix4f());
+//        Renderer.Instance().endBatching(0, 0, new Matrix4f());
     }
 
     public int GetGrid(int row, int column)
