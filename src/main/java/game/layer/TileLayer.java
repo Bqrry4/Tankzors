@@ -1,20 +1,22 @@
 package game.layer;
 
 import Managers.Renderer;
-import org.joml.Matrix4f;
+import Managers.ResourceManager;
 import org.joml.Vector4f;
+import renderer.Texture;
+import renderer.VAOStandart;
 
 public class TileLayer extends Layer {
-    int texID;
+    Texture tex;
 
     int tileW;
     int tileH;
 
     int[][] TileIdMap;
 
-    public TileLayer(int texID, int tilew, int tileH, int [][]TileIdMap)
+    public TileLayer(Texture tex, int tilew, int tileH, int [][]TileIdMap)
     {
-        this.texID = texID;
+        this.tex = tex;
         this.tileW = tilew;
         this.tileH = tileH;
         this.TileIdMap = TileIdMap;
@@ -22,7 +24,6 @@ public class TileLayer extends Layer {
 
     public void render()
     {
-        Renderer.Instance().beginBatching();
         for(int id = 0; id < TileIdMap.length; ++id)
         {
             for(int jd = 0; jd < TileIdMap[id].length; ++jd)
@@ -31,10 +32,11 @@ public class TileLayer extends Layer {
                 
                 int column = TileIdMap[id][jd] % 27 - 1;
                 int row = TileIdMap[id][jd] / 27;
-//                Renderer.Instance().DrawBatching(texID, new Vector4f(new float[]{tileW * column, tileH * row, tileW, tileH}), new Vector4f(new float[]{jd * tileW * 4, id * tileH * 4, tileW * 4, tileH * 4 }));
+                Renderer.Instance().Draw(tex, new Vector4f(new float[]{tileW * column, tileH * row, tileW, tileH}), new Vector4f(new float[]{jd * tileW * 4, id * tileH * 4, tileW * 4, tileH * 4 }));
             }
         }
-//        Renderer.Instance().endBatching(0, 0, new Matrix4f());
+        tex.Bind(0);
+        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
     }
 
     public int GetGrid(int row, int column)

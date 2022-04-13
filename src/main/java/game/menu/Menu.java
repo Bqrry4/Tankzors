@@ -2,9 +2,15 @@ package game.menu;
 
 import Managers.Renderer;
 import Managers.ResourceManager;
+import game.InputHandler;
 import renderer.Font;
 import renderer.Shader;
 import renderer.Texture;
+import renderer.VAOStandart;
+
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
+import static org.lwjgl.opengl.GL11.glBindTexture;
 
 public class Menu {
     private boolean isActive; //Active or not
@@ -12,13 +18,10 @@ public class Menu {
 
     Texture tex; //Background
 
-    Font font;
 
-
-    public Menu(Texture tex, Font font)
+    public Menu(Texture tex)
     {
         this.tex = tex;
-        this.font = font;
     }
 
     public void Process()
@@ -49,12 +52,13 @@ public class Menu {
 
     private void Render()
     {
-        tex.Bind(0);
-        font.Bind(0);
         Renderer.Instance().Draw(tex, null, null);
-        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"));
+        tex.Bind(0);
+        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
+
 
         component.show();
+
 
     }
 

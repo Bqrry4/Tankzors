@@ -1,26 +1,18 @@
 package game.object;
-
-import auxiliar.Direction;
-import game.interfaces.Renderable;
-import game.interfaces.Updatable;
 import org.joml.Vector4f;
-import renderer.Texture;
 
-public abstract class GameObjects implements Renderable, Updatable {
+public abstract class GameObjects {
 
-    int indices;
+
+    //Split in position and hitbox
     protected Vector4f hitbox;
-
-    Direction direction;
 
 
     public GameObjects()
     {}
 
-    public Direction Direction()
-    {
-        return direction;
-    }
+    public abstract void update();
+    public abstract void render();
 
     public Vector4f getHitbox()
     {

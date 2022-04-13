@@ -25,7 +25,10 @@ public class subMenu implements MenuComponent {
     @Override
     public void show()
     {
-
+        for(MenuComponent component : buttons)
+        {
+            component.show();
+        }
     }
 
     @Override

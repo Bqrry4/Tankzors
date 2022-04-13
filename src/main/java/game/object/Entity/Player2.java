@@ -1,6 +1,7 @@
-package game.object;
+package game.object.Entity;
 
 import Managers.Renderer;
+import game.object.GameObjects;
 import renderer.TextureMap;
 import auxiliar.Direction;
 import game.InputHandler;
@@ -11,10 +12,17 @@ import org.joml.Vector4f;
 
 import static org.lwjgl.glfw.GLFW.*;
 
-public class Player extends GameObjects{
+public class Player2 extends GameObjects {
 
     TextureMap tex;
     int RegionID;
+
+    private Direction direction;
+
+    public Direction Direction()
+    {
+        return direction;
+    }
 
     private Vector2f targetPosition;
 
@@ -38,7 +46,7 @@ public class Player extends GameObjects{
     int vt = 50;
 
 
-    public Player(TextureMap tex, int RegionID, int x, int y, int w, int h, Direction direction)
+    public Player2(TextureMap tex, int RegionID, int x, int y, int w, int h, Direction direction)
     {
         this.tex = tex;
         this.RegionID = RegionID;

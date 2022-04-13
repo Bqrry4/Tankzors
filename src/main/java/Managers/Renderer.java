@@ -1,14 +1,15 @@
 package Managers;
 
 import auxiliar.TextureRegion;
-import gui.Text;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryUtil;
 import renderer.Shader;
 import renderer.Texture;
 import renderer.TextureMap;
 
+import java.awt.*;
 import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
 
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL30.*;
@@ -29,24 +30,6 @@ public class Renderer
     //A constant that contains the name of texture uniform in shader
     private final String textureUniform = "u_texture";
     private final String transformUniform = "transform";
-
-
-/*    private final List<Shader> shaderList = new ArrayList<Shader>();
-    private final List<Mesh> meshList = new ArrayList<Mesh>();
-    private final List<Texture> textureList = new ArrayList<Texture>();
-
-    public void addShader(Shader shader)
-    {
-        shaderList.add(shader);
-    }
-    public void addTexture(Texture tex)
-    {
-        textureList.add(tex);
-    }
-    public void addMesh(Mesh mesh)
-    {
-        meshList.add(mesh);
-    }*/
 
 
     private final int bufferSize = 16384 * Float.BYTES; //~65kB
@@ -70,12 +53,12 @@ public class Renderer
         glBufferData(GL_ARRAY_BUFFER, size, GL_DYNAMIC_DRAW);
 
 
-        //position attribute
+/*        //position attribute
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * Float.BYTES, 0);
         glEnableVertexAttribArray(0);
         //texture coord attribute
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * Float.BYTES, 2 * Float.BYTES);
-        glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(1);*/
 
 
 
@@ -90,104 +73,9 @@ public class Renderer
 
     public void Clear()
     {
+        glUnmapBuffer(GL_ARRAY_BUFFER);
         vertices.clear();
         MemoryUtil.memFree(vertices);
-    }
-    public void InitBatch()
-    {
-
-        vao = glGenVertexArrays();
-        glBindVertexArray(vao);
-
-
-        vbo = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-
-        vertices = MemoryUtil.memAlloc(bufferSize);
-        long size = (long) vertices.capacity() * Float.BYTES;
-        glBufferData(GL_ARRAY_BUFFER, size, GL_DYNAMIC_DRAW);
-
-
-        //position attribute
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * Float.BYTES, 0);
-        glEnableVertexAttribArray(0);
-        //texture coord attribute
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * Float.BYTES, 2 * Float.BYTES);
-        glEnableVertexAttribArray(1);
-
-
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-        
-    }
-    public void beginBatching() {
-
-        numVertices = 0;
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        vertices = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY, vertices.capacity(), vertices);
-    }
-
-    public void endBatching(Shader shader) {
-        glUnmapBuffer(GL_ARRAY_BUFFER);
-
-        if (numVertices > 0) {
-            vertices.flip();
-            shader.use();
-/*            shader.SetUniform(transformUniform, mx);*/
-
-            glBindVertexArray(vao);
-
-            glDrawArrays(GL_TRIANGLES, 0, numVertices); //Triangle strips maybe
-
-        }
-
-        vertices.clear(); //Maybe not nedded
-    }
-
-    public void DrawBatching(Texture texture, Shader shader, Vector4f srcRect, Vector4f destRect)
-    {
-        //Transforming SDL-like coordinates in normalized one
-
-        /* Calculate Texture coordinates */
-        float s1 = srcRect.x / texture.Width();
-        float t1 =  srcRect.y / texture.Height();
-        float s2 = (srcRect.x + srcRect.z) / texture.Width();
-        float t2 = (srcRect.y + srcRect.w) / texture.Height();
-
-         //Calculate Vertex positions
-        float x1 = destRect.x / Settings.getWidth() - 1f;
-        float y1 = (destRect.y + destRect.w) *-1  / Settings.getHeigth() + 1f;
-        float x2 = (destRect.x + destRect.z) / Settings.getWidth() - 1f;
-        float y2 = (destRect.y)* -1 / Settings.getHeigth() + 1f;
-
-        //Put data into buffer
-        vertices.putFloat(x1).putFloat(y1).putFloat(s1).putFloat(t2);
-        vertices.putFloat(x1).putFloat(y2).putFloat(s1).putFloat(t1);
-        vertices.putFloat(x2).putFloat(y2).putFloat(s2).putFloat(t1);
-
-        vertices.putFloat(x1).putFloat(y1).putFloat(s1).putFloat(t2);
-        vertices.putFloat(x2).putFloat(y1).putFloat(s2).putFloat(t2);
-        vertices.putFloat(x2).putFloat(y2).putFloat(s2).putFloat(t1);
-
-        //* Increment with number of added vertices
-        numVertices += 6;
-
-        shader.SetUniform(textureUniform, 0);
-        texture.Bind(0);
-
-    }
-
-
-    public void useShader()
-    {
-
-    }
-
-    public void UseTexture()
-    {
-
     }
 
 
@@ -203,11 +91,14 @@ public class Renderer
         float s2 = (srcRect.x + srcRect.z + region.x()) / atlas.Width();
         float t2 = (srcRect.y + srcRect.w + region.y()) / atlas.Height();
 
+
+        float halfW = (float) Settings.getWidth() / 2;
+        float halfH = (float) Settings.getHeigth() / 2;
         //Calculate Vertex positions
-        float x1 = destRect.x / Settings.getWidth() - 1f;
-        float y1 = (destRect.y + destRect.w) *-1  / Settings.getHeigth() + 1f;
-        float x2 = (destRect.x + destRect.z) / Settings.getWidth() - 1f;
-        float y2 = (destRect.y)* -1 / Settings.getHeigth() + 1f;
+        float x1 = (destRect.x - halfW) / halfW;
+        float y1 = (halfH - destRect.y - destRect.w)  / halfH;
+        float x2 = (destRect.x + destRect.z - halfW) / halfW;
+        float y2 = (halfH - destRect.y) / halfH;
 
         //Put data into buffer
         vertices.putFloat(x1).putFloat(y1).putFloat(s1).putFloat(t2);
@@ -226,10 +117,11 @@ public class Renderer
     {
         //Transforming SDL-like coordinates in normalized one
 
-        // Calculate Texture coordinates
+        //If srcRect is null it takes the entire texture
         float s1 = 0f, t1 = 0f, s2 = 1f, t2 = 1f;
         if(srcRect != null)
         {
+            // Calculate Texture coordinates
             s1 = (srcRect.x) / texture.Width();
             t1 =  (srcRect.y) / texture.Height();
             s2 = (srcRect.x + srcRect.z) / texture.Width();
@@ -237,14 +129,18 @@ public class Renderer
         }
 
 
-        //Calculate Vertex positions
+        //If destRect is null it takes the entire screen
         float x1 = -1f, y1 = -1f, x2 = 1f, y2 = 1f;
         if(destRect != null)
         {
-            x1 = destRect.x / Settings.getWidth() - 1f;
-            y1 = (destRect.y + destRect.w) *-1  / Settings.getHeigth() + 1f;
-            x2 = (destRect.x + destRect.z) / Settings.getWidth() - 1f;
-            y2 = (destRect.y)* -1 / Settings.getHeigth() + 1f;
+            float halfW = (float) Settings.getWidth() / 2;
+            float halfH = (float) Settings.getHeigth() / 2;
+
+            //Calculate Vertex positions
+            x1 = (destRect.x - halfW) / halfW;
+            y1 = (halfH - destRect.y - destRect.w)  / halfH;
+            x2 = (destRect.x + destRect.z - halfW) / halfW;
+            y2 = (halfH - destRect.y) / halfH;
         }
 
 
@@ -261,7 +157,7 @@ public class Renderer
         numVertices += 6;
     }
 
-    public void Present(Shader shader) //Present the buffer to OpenGL
+    public void Present(Shader shader, int bufferFormat) //Present the buffer to OpenGL
     {
         glUnmapBuffer(GL_ARRAY_BUFFER);
 
@@ -270,6 +166,29 @@ public class Renderer
             shader.use();
 
             glBindVertexArray(vao);
+
+            switch (bufferFormat)
+            {
+                case 0:
+                    //position attribute
+                    glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * Float.BYTES, 0);
+                    glEnableVertexAttribArray(0);
+                    //texture coord attribute
+                    glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * Float.BYTES, 2 * Float.BYTES);
+                    glEnableVertexAttribArray(1);
+                    break;
+
+                case 1:
+                    //position attribute
+                    glVertexAttribPointer(0, 2, GL_FLOAT, false,8 * Float.BYTES, 0);
+                    glEnableVertexAttribArray(0);
+                    //texture coord attribute
+                    glVertexAttribPointer(1, 2, GL_FLOAT, false, 8 * Float.BYTES, 2 * Float.BYTES);
+                    glEnableVertexAttribArray(1);
+                    //Color attribute
+                    glVertexAttribPointer(2, 4, GL_FLOAT, false, 8 * Float.BYTES, 4 * Float.BYTES);
+                    glEnableVertexAttribArray(2);
+            }
 
             glDrawArrays(GL_TRIANGLES, 0, numVertices); //Triangle strips maybe
 
@@ -284,14 +203,18 @@ public class Renderer
     }
 
 
-/*    public void DrawText(Text text)
-    {
-
-    }*/
-
     public void addBufferInfo(ByteBuffer buffer, int cantity)
     {
         vertices.put(buffer);
+        numVertices += cantity;
+    }
+
+    public void ShapeByBuffer(FloatBuffer position, FloatBuffer uvs, Vector4f color,  int cantity)
+    {
+        for(int i = 0; i < cantity * 2; i += 2 )
+        {
+            vertices.putFloat(position.get(i)).putFloat(position.get(i+1)).putFloat(uvs.get(i)).putFloat(uvs.get(i+1)).putFloat(color.x).putFloat(color.y).putFloat(color.z).putFloat(color.w);
+        }
         numVertices += cantity;
     }
 

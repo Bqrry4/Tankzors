@@ -1,16 +1,16 @@
 package game;
 
 import Managers.ResourceManager;
+import Managers.Settings;
+import com.sun.tools.javac.Main;
 import game.level.Scene;
 import game.menu.Button;
 import game.menu.Menu;
-import game.menu.MenuComponent;
 import game.menu.subMenu;
 import gui.Text;
-import renderer.Mesh;
 import Managers.Renderer;
-import renderer.Shader;
-import renderer.Texture;
+import org.joml.Vector4f;
+import renderer.VAOStandart;
 
 import static org.lwjgl.opengl.GL30.*;
 
@@ -27,21 +27,15 @@ public class Game {
         MainWindow.BindKeyCallBack(InputHandler::keyUpdate);
         MainWindow.BindResizeCallback(Window::framebuffer_resize);
 
-/*
-        Renderer.Instance().addMesh(new Mesh());
-        Renderer.Instance().addShader(ResourceManager.Instance().LoadShader("assets/shaders/default.glsl", "default"));
-        Renderer.Instance().addTexture(ResourceManager.Instance().LoadTexture("assets/map/ground.png", "ground")); //0
-        Renderer.Instance().addTexture(ResourceManager.Instance().LoadTexture("assets/tanks/tanks.png", "tanks")); //1
-        Renderer.Instance().addTexture(ResourceManager.Instance().LoadTexture("assets/map/walls.png", "walls")); //2*/
 
         ResourceManager.Instance().LoadShader("assets/shaders/default.glsl", "default");
-        ResourceManager.Instance().LoadTexture("assets/map/ground.png", "ground"); //0
-        ResourceManager.Instance().LoadTexture("assets/tanks/tanks.png", "tanks"); //1
+        ResourceManager.Instance().LoadShader("assets/shaders/font.glsl", "font");
+        ResourceManager.Instance().LoadTexture("assets/map/ground.png", "ground");
+        ResourceManager.Instance().LoadTexture("assets/tanks/tanks.png", "tanks");
         ResourceManager.Instance().LoadTexture("assets/map/walls.png", "walls");
-        ResourceManager.Instance().LoadTexture("assets/tanks/33.jpg", "menu");
+        ResourceManager.Instance().LoadTexture("assets/gui/menu_pict.png", "menu");
         ResourceManager.Instance().LoadFont("assets/gui/Baloo2-Medium.ttf", "font");
 
-//        Renderer.Instance().InitBatch();
 
         Renderer.Instance().Init();
 
@@ -50,36 +44,29 @@ public class Game {
         scene.UpdateSize(width, height);
         scene.Load();
 
-
+        //Activate blend mode
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glClearColor(1f, 1f, 1f, 1.0f); //Clear screen
+
+        //Clear screen color
+        glClearColor(1f, 1f, 1f, 1.0f);
     }
 
 
     public void run()
     {
         //Menu instantiation
-        subMenu MainMenu = new subMenu("MainMenu");
+/*        subMenu MainMenu = new subMenu("MainMenu");
 
-        Button Start = new Button("Start");
-        subMenu Campaign = new subMenu("Campaign");
-        Button Arcade = new Button("Arcade");
-        subMenu Settings = new subMenu("Settings");
-        Button Exit = new Button("Exit");
+        Button Start = new Button(new Vector4f((float) Settings.getWidth()/2 - 70, 50, 140, 40), new Text("Start", ResourceManager.Instance().GetFont("font")));
+        Button Exit = new Button(new Vector4f((float) Settings.getWidth()/2 - 70, 150, 140, 40), new Text("EXIT", ResourceManager.Instance().GetFont("font")));
 
-        MainMenu.add(Campaign);
-        MainMenu.add(Arcade);
-        MainMenu.add(Settings);
+        MainMenu.add(Start);
         MainMenu.add(Exit);
 
-        Menu menu = new Menu(ResourceManager.Instance().GetTexture("menu"), ResourceManager.Instance().GetFont("font"));
+        Menu menu = new Menu(ResourceManager.Instance().GetTexture("menu"));
         menu.SetMenuAttribute(MainMenu);
-//        menu.setTrigger(true);
-
-
-        Text text = new Text("Hello, World!", ResourceManager.Instance().GetFont("font"));
-        text.setText("Hello, World!");
+//        menu.setTrigger(true);*/
 
 
         //Game Loop
@@ -88,22 +75,14 @@ public class Game {
             MainWindow.ProcessEvents();
             WindowTimer.Instance().Ticks();
 
-/*            DefaultShader.SetUniform1f("u_texture", 0);
-            mesh.Bind();
-            tex1.Bind(0);
-            mesh.render();*/
 
-
-
-            if(menu.isTriggered())
+            if(/*menu.isTriggered()*/false)
             {
-                menu.Process();
+//                menu.Process();
             }
             else
             {
-//                scene.Process();
-                text.render();
-                Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"));
+                scene.Process();
             }
 
             MainWindow.SwapRenderBuffers();
@@ -112,7 +91,9 @@ public class Game {
         MainWindow.Destroy();
         Window.CloseProperties();
 
-//        Renderer.Instance().Clear();
+        ResourceManager.Instance().Free();
+
+      //  Renderer.Instance().Clear();
     }
 
 }

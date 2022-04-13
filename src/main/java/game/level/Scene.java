@@ -2,12 +2,16 @@ package game.level;
 
 import Managers.Renderer;
 import Managers.ResourceManager;
+import game.layer.TileLayer;
+import game.object.Entity.Player;
+import game.object.Entity.tank.Field;
+import game.object.Entity.tank.HealthBar;
+import game.object.Entity.tank.Tank;
 import renderer.TextureMap;
 import auxiliar.TextureRegion;
 import game.layer.Layer;
 import auxiliar.Direction;
 import game.object.GameObjects;
-import game.object.Player;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
@@ -22,6 +26,7 @@ public class Scene {
     //List of Layers
     List<Layer> layerList = new ArrayList<Layer>();
 
+    Player player;
 
     public Scene()
     {
@@ -39,12 +44,18 @@ public class Scene {
                 new TextureRegion(0, 24, 384, 24),
                 new TextureRegion(0, 48, 384, 24),
                 new TextureRegion(0, 72, 384, 24),
-                new TextureRegion(0, 96, 384, 28)
+                new TextureRegion(0, 96, 384, 28),
+                new TextureRegion(0, 122, 168, 28),
+                new TextureRegion(0, 150, 288, 4)
+
+
         };
         textureMap.setIndices(Indices);
 
 
-        objectList.add(new Player(textureMap,0, 18, 18, 24, 24, Direction.Down));
+        player = new Player(new Tank(textureMap, 0, 18, 18, 24, 24, Direction.Down, new HealthBar(textureMap.getRegion(6) ,12, textureMap), new Field(0, textureMap.getRegion(5), 6, textureMap)));
+//        objectList.add(new Player2(textureMap,0, 18, 18, 24, 24, Direction.Down));
+
 
         int[][] map = new int[][] {
                 {1,2,2,3,1,5,4,6,3,3,4,4,2,3,1,4},
@@ -71,7 +82,7 @@ public class Scene {
                 {2,3,5,2,4,5,5,6,2,1,5,6,1,1,3,4}
 
         };
-//        layerList.add(new TileLayer(0, 20, 20, map));
+        layerList.add(new TileLayer(ResourceManager.Instance().GetTexture("ground"), 20, 20, map));
       int[][] map2 = {
               {217,217,218,217,217,218,217,218,218,217,218,218,218,217,218,217},
               {218,0,0,0,0,0,0,0,0,218,217,217,217,218,217,217},
@@ -96,7 +107,7 @@ public class Scene {
               {218,0,0,0,0,0,217,0,0,0,0,0,0,0,0,217},
               {218,217,217,217,217,217,218,218,218,217,218,217,217,218,218,217}
         };
-//        layerList.add(new TileLayer(2, 20, 20, map2));
+        layerList.add(new TileLayer(ResourceManager.Instance().GetTexture("walls"), 20, 20, map2));
     }
 
     public void Process()
@@ -120,9 +131,11 @@ public class Scene {
         {
             object.update();
         }
+        player.update();
 
         //Collision
-//        Collision.detect((Player) objectList.get(0), (TileLayer) layerList.get(1));
+//        Collision.detect((Player2) objectList.get(0), (TileLayer) layerList.get(1));
+//        Collision.detect((Player2) objectList.get(0), size.x, size.y );
 
     }
 
@@ -137,7 +150,7 @@ public class Scene {
         {
             layer.render();
         }
-        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"));
+        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
 
         ResourceManager.Instance().GetTexture("tanks").Bind(0);
 
@@ -145,7 +158,8 @@ public class Scene {
         {
             object.render();
         }
+        player.render();
 
-        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"));
+        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
     }
 }
