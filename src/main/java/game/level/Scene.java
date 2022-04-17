@@ -4,9 +4,12 @@ import Managers.Renderer;
 import Managers.ResourceManager;
 import game.layer.TileLayer;
 import game.object.Entity.Player;
+import game.object.Entity.shell.Shell;
 import game.object.Entity.tank.Field;
 import game.object.Entity.tank.HealthBar;
 import game.object.Entity.tank.Tank;
+import org.joml.Vector4f;
+import renderer.Texture;
 import renderer.TextureMap;
 import auxiliar.TextureRegion;
 import game.layer.Layer;
@@ -47,14 +50,16 @@ public class Scene {
                 new TextureRegion(0, 96, 384, 28),
                 new TextureRegion(0, 122, 168, 28),
                 new TextureRegion(0, 150, 288, 4)
-
-
         };
         textureMap.setIndices(Indices);
+
+        TextureMap tex2 = new TextureMap();
+        tex2.setTexture(ResourceManager.Instance().GetTexture("bullets"));
 
 
         player = new Player(new Tank(textureMap, 0, 18, 18, 24, 24, Direction.Down, new HealthBar(textureMap.getRegion(6) ,12, textureMap), new Field(0, textureMap.getRegion(5), 6, textureMap)));
 //        objectList.add(new Player2(textureMap,0, 18, 18, 24, 24, Direction.Down));
+        objectList.add(new Shell(Direction.Left, new Vector4f(100, 100, 24, 24), new TextureRegion(0, 0, 24, 24), tex2));
 
 
         int[][] map = new int[][] {
@@ -152,12 +157,15 @@ public class Scene {
         }
         Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
 
-        ResourceManager.Instance().GetTexture("tanks").Bind(0);
+        ResourceManager.Instance().GetTexture("bullets").Bind(0);
 
         for(GameObjects object : objectList)
         {
             object.render();
         }
+        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
+
+        ResourceManager.Instance().GetTexture("tanks").Bind(0);
         player.render();
 
         Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);

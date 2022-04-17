@@ -33,6 +33,7 @@ public class Game {
         ResourceManager.Instance().LoadTexture("assets/map/ground.png", "ground");
         ResourceManager.Instance().LoadTexture("assets/tanks/tanks.png", "tanks");
         ResourceManager.Instance().LoadTexture("assets/map/walls.png", "walls");
+        ResourceManager.Instance().LoadTexture("assets/bullets.png", "bullets");
         ResourceManager.Instance().LoadTexture("assets/gui/menu_pict.png", "menu");
         ResourceManager.Instance().LoadFont("assets/gui/Baloo2-Medium.ttf", "font");
 

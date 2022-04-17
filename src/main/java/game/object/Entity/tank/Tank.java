@@ -22,7 +22,7 @@ public class Tank extends GameObjects {
 
     Field fb;
 
-    int Speed = 50;
+    float Speed = 50;
 
     private Direction direction;
     float frame = 0;

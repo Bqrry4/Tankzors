@@ -7,11 +7,17 @@ import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL15.*;
 
 public class Texture {
+
+    static int instances = 0;
+    final int orderID;
+
     protected int texId;
     protected int width;
     protected int height;
 
-    public Texture() {}
+    public Texture() {
+        orderID = instances++;
+    }
 
     public void Generate(ByteBuffer data, int width, int height, int channels)
     {
@@ -52,9 +58,9 @@ public class Texture {
         return height;
     }
 
-    public int GetID()
+    public int GetOrderID()
     {
-        return texId;
+        return orderID;
     }
 
     public void Bind(int slot)
@@ -62,5 +68,7 @@ public class Texture {
         glActiveTexture(GL_TEXTURE0 + slot);
         glBindTexture(GL_TEXTURE_2D, texId);
     }
+
+
 
 }

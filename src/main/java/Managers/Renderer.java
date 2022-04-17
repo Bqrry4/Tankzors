@@ -1,6 +1,8 @@
 package Managers;
 
+import auxiliar.Direction;
 import auxiliar.TextureRegion;
+import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.system.MemoryUtil;
 import renderer.Shader;
@@ -157,6 +159,87 @@ public class Renderer
         numVertices += 6;
     }
 
+
+
+
+    //Rotation, Up(by 0 degree), Left(+90d), Right(-90d), Down(fliping)
+    public void Draw(Texture texture, Vector4f srcRect, Vector4f destRect, Direction rotation)
+    {
+        //Transforming SDL-like coordinates in normalized one
+
+        //If srcRect is null it takes the entire texture
+        float s1 = 0f, t1 = 0f, s2 = 1f, t2 = 1f;
+        if(srcRect != null)
+        {
+            // Calculate Texture coordinates
+            s1 = (srcRect.x) / texture.Width();
+            t1 =  (srcRect.y) / texture.Height();
+            s2 = (srcRect.x + srcRect.z) / texture.Width();
+            t2 = (srcRect.y + srcRect.w) / texture.Height();
+        }
+
+        //Rotation part
+        Vector2f v1, v2, v3, v4;
+
+        switch (rotation)
+        {
+            case Left:
+                v1 = new Vector2f(s1, t1);
+                v2 = new Vector2f(s2, t1);
+                v3 = new Vector2f(s2, t2);
+                v4 = new Vector2f(s1, t2);
+                break;
+            case Right:
+                v1 = new Vector2f(s2, t2);
+                v2 = new Vector2f(s1, t2);
+                v3 = new Vector2f(s1, t1);
+                v4 = new Vector2f(s2, t1);
+                break;
+            case Down:
+                v1 = new Vector2f(s1, t1);
+                v2 = new Vector2f(s1, t2);
+                v3 = new Vector2f(s2, t2);
+                v4 = new Vector2f(s2, t1);
+                break;
+            case Up:
+            default:
+                v1 = new Vector2f(s1, t2);
+                v2 = new Vector2f(s1, t1);
+                v3 = new Vector2f(s2, t1);
+                v4 = new Vector2f(s2, t2);
+                break;
+        }
+
+
+        //If destRect is null it takes the entire screen
+        float x1 = -1f, y1 = -1f, x2 = 1f, y2 = 1f;
+        if(destRect != null)
+        {
+            float halfW = (float) Settings.getWidth() / 2;
+            float halfH = (float) Settings.getHeigth() / 2;
+
+            //Calculate Vertex positions
+            x1 = (destRect.x - halfW) / halfW;
+            y1 = (halfH - destRect.y - destRect.w)  / halfH;
+            x2 = (destRect.x + destRect.z - halfW) / halfW;
+            y2 = (halfH - destRect.y) / halfH;
+        }
+
+
+        //Put data into buffer
+        vertices.putFloat(x1).putFloat(y1).putFloat(v1.x).putFloat(v1.y);
+        vertices.putFloat(x1).putFloat(y2).putFloat(v2.x).putFloat(v2.y);
+        vertices.putFloat(x2).putFloat(y2).putFloat(v3.x).putFloat(v3.y);
+
+        vertices.putFloat(x1).putFloat(y1).putFloat(v1.x).putFloat(v1.y);
+        vertices.putFloat(x2).putFloat(y1).putFloat(v4.x).putFloat(v4.y);
+        vertices.putFloat(x2).putFloat(y2).putFloat(v3.x).putFloat(v3.y);
+
+        //Increment with number of added vertices
+        numVertices += 6;
+    }
+
+
     public void Present(Shader shader, int bufferFormat) //Present the buffer to OpenGL
     {
         glUnmapBuffer(GL_ARRAY_BUFFER);
@@ -176,6 +259,9 @@ public class Renderer
                     //texture coord attribute
                     glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * Float.BYTES, 2 * Float.BYTES);
                     glEnableVertexAttribArray(1);
+/*                    //TexId
+                    glVertexAttribPointer(2, 1, GL_FLOAT, false, 5 * Float.BYTES, 4 * Float.BYTES);
+                    glEnableVertexAttribArray(2);*/
                     break;
 
                 case 1:
