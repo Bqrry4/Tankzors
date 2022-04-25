@@ -9,8 +9,6 @@ import game.menu.Menu;
 import game.menu.subMenu;
 import gui.Text;
 import Managers.Renderer;
-import org.joml.Vector4f;
-import renderer.VAOStandart;
 
 import static org.lwjgl.opengl.GL30.*;
 
@@ -30,12 +28,27 @@ public class Game {
 
         ResourceManager.Instance().LoadShader("assets/shaders/default.glsl", "default");
         ResourceManager.Instance().LoadShader("assets/shaders/font.glsl", "font");
-        ResourceManager.Instance().LoadTexture("assets/map/ground.png", "ground");
+
+        int[] id = {0, 1, 2, 3, 4, 5, 6, 7};
+
+        ResourceManager.Instance().GetShader("default").SetUniform("u_texture", id);
+
+
         ResourceManager.Instance().LoadTexture("assets/tanks/tanks.png", "tanks");
+        ResourceManager.Instance().LoadTexture("assets/map/ground.png", "ground");
         ResourceManager.Instance().LoadTexture("assets/map/walls.png", "walls");
         ResourceManager.Instance().LoadTexture("assets/bullets.png", "bullets");
         ResourceManager.Instance().LoadTexture("assets/gui/menu_pict.png", "menu");
-        ResourceManager.Instance().LoadFont("assets/gui/Baloo2-Medium.ttf", "font");
+
+        ResourceManager.Instance().GetTexture("tanks").BindByOrder();
+        ResourceManager.Instance().GetTexture("ground").BindByOrder();
+        ResourceManager.Instance().GetTexture("walls").BindByOrder();
+        ResourceManager.Instance().GetTexture("bullets").BindByOrder();
+        ResourceManager.Instance().GetTexture("menu").BindByOrder();
+
+
+
+//        ResourceManager.Instance().LoadFont("assets/gui/Baloo2-Medium.ttf", "font");
 
 
         Renderer.Instance().Init();

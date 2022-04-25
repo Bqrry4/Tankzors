@@ -2,13 +2,12 @@ package Managers;
 
 import auxiliar.Direction;
 import game.layer.TileLayer;
-import game.object.Entity.Player2;
 import org.joml.Vector4f;
 
 public class Collision {
 
 
-
+/*
     public static void detect(Player2 obj, TileLayer map)
     {
         Vector4f hitbox = obj.getHitbox();
@@ -57,5 +56,5 @@ public class Collision {
             obj.SetCollideFlag(true);
         }
 
-    }
+    }*/
 }

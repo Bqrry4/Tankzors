@@ -200,7 +200,6 @@ public class ResourceManager {
     public void Free()
     {
 
-
         for(Font font : Fonts.values())
         {
             font.Clear();

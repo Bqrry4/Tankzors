@@ -42,7 +42,7 @@ public class Shader {
 
     public void Compile(String vertex, String fragment)
     {
-//Compiling vertex shader
+        //Compiling vertex shader
         int vs = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vs, vertex);
         glCompileShader(vs);
@@ -85,18 +85,26 @@ public class Shader {
         return shader;
     }
 
-
     public void SetUniform(String Identifier, int value)
     {
+        use();
         glUniform1i(glGetUniformLocation(shader, Identifier), value);
     }
 
     public void SetUniform(String Identifier, Matrix4f value) {
+        use();
         try (MemoryStack stack = MemoryStack.stackPush()) {
             FloatBuffer buffer = stack.mallocFloat(16);
             value.get(buffer);
             glUniformMatrix4fv(glGetUniformLocation(shader, Identifier), false, buffer);
         }
+    }
+
+    public void SetUniform(String Identifier, int[] value)
+    {
+        use();
+        glUniform1iv(glGetUniformLocation(shader, Identifier), value);
+
     }
 
 }

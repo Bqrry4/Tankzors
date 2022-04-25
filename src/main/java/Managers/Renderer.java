@@ -81,11 +81,14 @@ public class Renderer
     }
 
 
+/*
     public void Draw(TextureMap atlas, int RegionID, Vector4f srcRect, Vector4f destRect)
     {
         //Transforming SDL-like coordinates in normalized one
 
-        /* Calculate Texture coordinates */
+        */
+/* Calculate Texture coordinates *//*
+
         TextureRegion region = atlas.getRegion(RegionID);
 
         float s1 = (srcRect.x + region.x()) / atlas.Width();
@@ -114,49 +117,11 @@ public class Renderer
         //* Increment with number of added vertices
         numVertices += 6;
     }
+*/
 
     public void Draw(Texture texture, Vector4f srcRect, Vector4f destRect)
     {
-        //Transforming SDL-like coordinates in normalized one
-
-        //If srcRect is null it takes the entire texture
-        float s1 = 0f, t1 = 0f, s2 = 1f, t2 = 1f;
-        if(srcRect != null)
-        {
-            // Calculate Texture coordinates
-            s1 = (srcRect.x) / texture.Width();
-            t1 =  (srcRect.y) / texture.Height();
-            s2 = (srcRect.x + srcRect.z) / texture.Width();
-            t2 = (srcRect.y + srcRect.w) / texture.Height();
-        }
-
-
-        //If destRect is null it takes the entire screen
-        float x1 = -1f, y1 = -1f, x2 = 1f, y2 = 1f;
-        if(destRect != null)
-        {
-            float halfW = (float) Settings.getWidth() / 2;
-            float halfH = (float) Settings.getHeigth() / 2;
-
-            //Calculate Vertex positions
-            x1 = (destRect.x - halfW) / halfW;
-            y1 = (halfH - destRect.y - destRect.w)  / halfH;
-            x2 = (destRect.x + destRect.z - halfW) / halfW;
-            y2 = (halfH - destRect.y) / halfH;
-        }
-
-
-        //Put data into buffer
-        vertices.putFloat(x1).putFloat(y1).putFloat(s1).putFloat(t2);
-        vertices.putFloat(x1).putFloat(y2).putFloat(s1).putFloat(t1);
-        vertices.putFloat(x2).putFloat(y2).putFloat(s2).putFloat(t1);
-
-        vertices.putFloat(x1).putFloat(y1).putFloat(s1).putFloat(t2);
-        vertices.putFloat(x2).putFloat(y1).putFloat(s2).putFloat(t2);
-        vertices.putFloat(x2).putFloat(y2).putFloat(s2).putFloat(t1);
-
-        //Increment with number of added vertices
-        numVertices += 6;
+        Draw(texture, srcRect, destRect, Direction.Up);
     }
 
 
@@ -227,13 +192,13 @@ public class Renderer
 
 
         //Put data into buffer
-        vertices.putFloat(x1).putFloat(y1).putFloat(v1.x).putFloat(v1.y);
-        vertices.putFloat(x1).putFloat(y2).putFloat(v2.x).putFloat(v2.y);
-        vertices.putFloat(x2).putFloat(y2).putFloat(v3.x).putFloat(v3.y);
+        vertices.putFloat(x1).putFloat(y1).putFloat(v1.x).putFloat(v1.y).putFloat(texture.GetOrderID());
+        vertices.putFloat(x1).putFloat(y2).putFloat(v2.x).putFloat(v2.y).putFloat(texture.GetOrderID());
+        vertices.putFloat(x2).putFloat(y2).putFloat(v3.x).putFloat(v3.y).putFloat(texture.GetOrderID());
 
-        vertices.putFloat(x1).putFloat(y1).putFloat(v1.x).putFloat(v1.y);
-        vertices.putFloat(x2).putFloat(y1).putFloat(v4.x).putFloat(v4.y);
-        vertices.putFloat(x2).putFloat(y2).putFloat(v3.x).putFloat(v3.y);
+        vertices.putFloat(x1).putFloat(y1).putFloat(v1.x).putFloat(v1.y).putFloat(texture.GetOrderID());
+        vertices.putFloat(x2).putFloat(y1).putFloat(v4.x).putFloat(v4.y).putFloat(texture.GetOrderID());
+        vertices.putFloat(x2).putFloat(y2).putFloat(v3.x).putFloat(v3.y).putFloat(texture.GetOrderID());
 
         //Increment with number of added vertices
         numVertices += 6;
@@ -254,14 +219,14 @@ public class Renderer
             {
                 case 0:
                     //position attribute
-                    glVertexAttribPointer(0, 2, GL_FLOAT, false, 4 * Float.BYTES, 0);
+                    glVertexAttribPointer(0, 2, GL_FLOAT, false, 5 * Float.BYTES, 0);
                     glEnableVertexAttribArray(0);
                     //texture coord attribute
-                    glVertexAttribPointer(1, 2, GL_FLOAT, false, 4 * Float.BYTES, 2 * Float.BYTES);
+                    glVertexAttribPointer(1, 2, GL_FLOAT, false, 5 * Float.BYTES, 2 * Float.BYTES);
                     glEnableVertexAttribArray(1);
-/*                    //TexId
+                    //TexId
                     glVertexAttribPointer(2, 1, GL_FLOAT, false, 5 * Float.BYTES, 4 * Float.BYTES);
-                    glEnableVertexAttribArray(2);*/
+                    glEnableVertexAttribArray(2);
                     break;
 
                 case 1:

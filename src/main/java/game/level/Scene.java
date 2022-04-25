@@ -3,21 +3,20 @@ package game.level;
 import Managers.Renderer;
 import Managers.ResourceManager;
 import game.layer.TileLayer;
-import game.object.Entity.Player;
-import game.object.Entity.shell.Shell;
+import game.object.Entity.AISystem;
+import game.Controller.Player;
 import game.object.Entity.tank.Field;
 import game.object.Entity.tank.HealthBar;
 import game.object.Entity.tank.Tank;
-import org.joml.Vector4f;
-import renderer.Texture;
 import renderer.TextureMap;
 import auxiliar.TextureRegion;
 import game.layer.Layer;
 import auxiliar.Direction;
-import game.object.GameObjects;
+import game.object.GameObject;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Scene {
@@ -25,11 +24,12 @@ public class Scene {
     //Size of the Scene
     private final Vector2i size = new Vector2i(100);
     //List of Objects
-    List<GameObjects> objectList = new ArrayList<GameObjects>();
+    List<GameObject> objectList = new LinkedList<GameObject>();
     //List of Layers
     List<Layer> layerList = new ArrayList<Layer>();
 
     Player player;
+    AISystem AI;
 
     public Scene()
     {
@@ -49,7 +49,11 @@ public class Scene {
                 new TextureRegion(0, 72, 384, 24),
                 new TextureRegion(0, 96, 384, 28),
                 new TextureRegion(0, 122, 168, 28),
-                new TextureRegion(0, 150, 288, 4)
+
+                new TextureRegion(0, 150, 288, 4),
+                new TextureRegion(28, 122, 168, 28),
+
+
         };
         textureMap.setIndices(Indices);
 
@@ -57,9 +61,21 @@ public class Scene {
         tex2.setTexture(ResourceManager.Instance().GetTexture("bullets"));
 
 
-        player = new Player(new Tank(textureMap, 0, 18, 18, 24, 24, Direction.Down, new HealthBar(textureMap.getRegion(6) ,12, textureMap), new Field(0, textureMap.getRegion(5), 6, textureMap)));
-//        objectList.add(new Player2(textureMap,0, 18, 18, 24, 24, Direction.Down));
-        objectList.add(new Shell(Direction.Left, new Vector4f(100, 100, 24, 24), new TextureRegion(0, 0, 24, 24), tex2));
+        Tank tank = new Tank(this, textureMap.getTexture(), textureMap.getRegion(0), 18, 18, 24, 24, Direction.Down, new HealthBar(textureMap.getRegion(6) ,12, textureMap.getTexture()), new Field(0, textureMap.getRegion(5), 6, textureMap.getTexture()));
+        objectList.add(tank);
+
+
+        player = new Player(tank);
+        AI = new AISystem();
+
+        AI.addStalked(tank);
+
+        tank = new Tank(this, textureMap.getTexture(), textureMap.getRegion(0), 18, 18, 24, 24, Direction.Down, new HealthBar(textureMap.getRegion(6) ,12, textureMap.getTexture()), new Field(0, textureMap.getRegion(7), 6, textureMap.getTexture()));
+
+        AI.addStalker(tank);
+
+
+        objectList.add(tank);
 
 
         int[][] map = new int[][] {
@@ -131,43 +147,38 @@ public class Scene {
 
     private void Update()
     {
+
+        player.update();
+
+        AI.ProcessCommend();
+
         //update objects state
-        for(GameObjects object : objectList)
+        for(GameObject object : objectList)
         {
             object.update();
         }
-        player.update();
-
-        //Collision
-//        Collision.detect((Player2) objectList.get(0), (TileLayer) layerList.get(1));
-//        Collision.detect((Player2) objectList.get(0), size.x, size.y );
 
     }
 
     private void Render()
     {
-        //then render them
-        //update layers and objects
-
-        ResourceManager.Instance().GetTexture("tanks").Bind(0);
 
         for(Layer layer : layerList)
         {
             layer.render();
         }
-        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
 
-        ResourceManager.Instance().GetTexture("bullets").Bind(0);
-
-        for(GameObjects object : objectList)
+        for(GameObject object : objectList)
         {
             object.render();
         }
-        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
 
-        ResourceManager.Instance().GetTexture("tanks").Bind(0);
-        player.render();
 
         Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
+    }
+
+    public void addObject(GameObject obj)
+    {
+        objectList.add(obj);
     }
 }

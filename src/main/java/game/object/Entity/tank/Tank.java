@@ -4,13 +4,19 @@ import Managers.Renderer;
 import auxiliar.Direction;
 import auxiliar.TextureRegion;
 import game.WindowTimer;
-import game.object.GameObjects;
+import game.level.Scene;
+import game.object.GameObject;
+import game.object.Munition.MunitionFactory;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
-import renderer.TextureMap;
+import renderer.Texture;
 
-public class Tank extends GameObjects {
+public class Tank extends GameObject {
 
+    //A reference to scene that it belongs
+    Scene scene;
+
+    Texture tex;
     TextureRegion region;
     final int frames = 16;
     final float frameQuad;
@@ -18,7 +24,6 @@ public class Tank extends GameObjects {
     int fractionID;
 
     HealthBar hb;
-
 
     Field fb;
 
@@ -34,30 +39,30 @@ public class Tank extends GameObjects {
 
     boolean rotatingFlag = false;
     boolean movingFlag = false;
-    boolean collideFlag = false; //Have collision on the active direction
-
-    TextureMap tex;
-    int RegionID;
+    boolean collideFlag = false; //Has collision on the active direction
 
 
+    //Atacking part
+    boolean CanAtack = false;
+    int TresHold = 30;
+    double CountDown = 0;
 
-    public Tank(TextureMap tex, int RegionID, int x, int y, int w, int h, Direction direction, HealthBar hb, Field field)
+    public Tank(Scene scene, Texture tex, TextureRegion RegionID, int x, int y, int w, int h, Direction direction, HealthBar hb, Field field)
     {
+        this.scene = scene;
+
         this.tex = tex;
-        this.RegionID = RegionID;
+        this.region = RegionID;
 
         hitbox = new Vector4f(x, y, w, h);
         targetPosition = new Vector2f(x, y);
         this.direction = direction;
         this.desired = this.direction;
 
-        region = tex.getRegion(RegionID);
-
         frameQuad = (float) region.w() / frames;
 
         this.hb = hb;
         this.fb = field;
-
     }
 
     @Override
@@ -68,17 +73,13 @@ public class Tank extends GameObjects {
 
     @Override
     public void render() {
-
         fb.render(hitbox);
-        Renderer.Instance().Draw(tex ,new Vector4f(region.x() + (frameQuad * (int)frame), region.y(), frameQuad, region.h()), new Vector4f(hitbox.x*4 , hitbox.y*4, frameQuad*4, region.h()*4));
+        Renderer.Instance().Draw(tex ,new Vector4f(region.x() + (frameQuad * (int)frame), region.y(), frameQuad, region.h()), new Vector4f(hitbox.x*2 , hitbox.y*2, frameQuad*2, region.h()*2));
         hb.render(new Vector2f(hitbox.x, hitbox.y - 1));
-
     }
 
-    public void Movement()
+    private void Movement()
     {
-
-//        System.out.println(direction);
 
         //If in animation
         float sign = Math.signum(toFrame - frame);
@@ -184,6 +185,34 @@ public class Tank extends GameObjects {
                 rotatingFlag = true;
             }
         }
+    }
+
+    public void WantToAtack(boolean value)
+    {
+/*        if(CountDown < TresHold)
+        {
+            CountDown += WindowTimer.Instance().GetDt();
+        }
+        else
+        {
+
+        }*/
+
+        //
+        scene.addObject(MunitionFactory.spawn());
+
+
+        CanAtack = value;
+    }
+
+    public boolean Idle()
+    {
+        return !rotatingFlag && !movingFlag;
+    }
+
+    public boolean CanAtack()
+    {
+        return CanAtack;
     }
 
 }

@@ -1,4 +1,4 @@
-package game.object.Entity;
+package game.Controller;
 
 import auxiliar.Direction;
 import game.InputHandler;
@@ -20,10 +20,7 @@ public class Player {
 
     public void update()
     {
-
-        tank.update();
         ProcessCommend();
-
     }
 
     private void ProcessCommend()
@@ -53,12 +50,13 @@ public class Player {
             tank.MoveBy(20, Direction.Right);
             return;
         }
+
+        if(InputHandler.keyState(GLFW_KEY_SPACE))
+        {
+            tank.WantToAtack(true);
+        }
     }
 
-    public void render()
-    {
-        tank.render();
-    }
 
 
 }

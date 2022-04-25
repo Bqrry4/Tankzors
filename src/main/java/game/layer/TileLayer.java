@@ -4,7 +4,6 @@ import Managers.Renderer;
 import Managers.ResourceManager;
 import org.joml.Vector4f;
 import renderer.Texture;
-import renderer.VAOStandart;
 
 public class TileLayer extends Layer {
     Texture tex;
@@ -32,10 +31,10 @@ public class TileLayer extends Layer {
                 
                 int column = TileIdMap[id][jd] % 27 - 1;
                 int row = TileIdMap[id][jd] / 27;
-                Renderer.Instance().Draw(tex, new Vector4f(new float[]{tileW * column, tileH * row, tileW, tileH}), new Vector4f(new float[]{jd * tileW * 4, id * tileH * 4, tileW * 4, tileH * 4 }));
+                Renderer.Instance().Draw(tex, new Vector4f(new float[]{tileW * column, tileH * row, tileW, tileH}), new Vector4f(new float[]{jd * tileW * 2, id * tileH * 2, tileW * 2, tileH * 2 }));
             }
         }
-        tex.Bind(0);
+
         Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
     }
 

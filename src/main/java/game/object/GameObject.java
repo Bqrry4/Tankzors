@@ -1,14 +1,14 @@
 package game.object;
 import org.joml.Vector4f;
 
-public abstract class GameObjects {
+public abstract class GameObject {
 
 
     //Split in position and hitbox
     protected Vector4f hitbox;
 
 
-    public GameObjects()
+    public GameObject()
     {}
 
     public abstract void update();

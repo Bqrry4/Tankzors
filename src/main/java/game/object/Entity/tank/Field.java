@@ -2,9 +2,8 @@ package game.object.Entity.tank;
 
 import Managers.Renderer;
 import auxiliar.TextureRegion;
-import org.joml.Vector2f;
 import org.joml.Vector4f;
-import renderer.TextureMap;
+import renderer.Texture;
 
 public class Field {
 
@@ -20,9 +19,9 @@ public class Field {
     final int frames;
     final float frameQuad;
 
-    TextureMap tex;
+    Texture tex;
 
-    public Field(int type, TextureRegion region, int frames, TextureMap tex)
+    public Field(int type, TextureRegion region, int frames, Texture tex)
     {
         this.type = type;
 
@@ -55,7 +54,7 @@ public class Field {
         }
 
 
-        Renderer.Instance().Draw(tex, new Vector4f(region.x() + frameQuad * state, region.y(), frameQuad, region.h()), new Vector4f((position.x + position.z/2 - frameQuad/2)*4 , (position.y + position.w/2 - (float) region.h()/2)*4, frameQuad*4, region.h()*4));
+        Renderer.Instance().Draw(tex, new Vector4f(region.x() + frameQuad * state, region.y(), frameQuad, region.h()), new Vector4f((position.x + position.z/2 - frameQuad/2)*2 , (position.y + position.w/2 - (float) region.h()/2)*2, frameQuad*2, region.h()*2));
     }
 
 

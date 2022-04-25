@@ -6,14 +6,14 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL13.GL_TEXTURE0;
 import static org.lwjgl.opengl.GL15.*;
 
-public class Texture {
+public final class Texture {
 
     static int instances = 0;
     final int orderID;
 
-    protected int texId;
-    protected int width;
-    protected int height;
+    private int texId;
+    private int width;
+    private int height;
 
     public Texture() {
         orderID = instances++;
@@ -47,8 +47,6 @@ public class Texture {
 
     }
 
-
-
     public int Width()
     {
         return width;
@@ -69,6 +67,12 @@ public class Texture {
         glBindTexture(GL_TEXTURE_2D, texId);
     }
 
+    //Make it deprecated later
+    public void BindByOrder()
+    {
+        glActiveTexture(GL_TEXTURE0 + orderID);
+        glBindTexture(GL_TEXTURE_2D, texId);
+    }
 
 
 }

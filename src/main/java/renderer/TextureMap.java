@@ -1,11 +1,13 @@
 package renderer;
 
 import auxiliar.TextureRegion;
-import renderer.Texture;
 
-public class TextureMap extends Texture {
+public class TextureMap {
+
+    Texture texture;
 
     TextureRegion[] Indices;
+
 
     public TextureMap()
     {}
@@ -27,15 +29,12 @@ public class TextureMap extends Texture {
 
     public void setTexture(Texture texture)
     {
-        this.texId = texture.texId;
-        this.width = texture.width;
-        this.height = texture.height;
+        this.texture = texture;
     }
 
-
-    public void UseTextureAtlas()
+    public Texture getTexture()
     {
-        
+        return texture;
     }
 
 }
