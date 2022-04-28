@@ -35,7 +35,6 @@ public class TileLayer extends Layer {
             }
         }
 
-        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
     }
 
     public int GetGrid(int row, int column)

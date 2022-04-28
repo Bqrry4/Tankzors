@@ -3,11 +3,12 @@ package game.Controller;
 import auxiliar.Direction;
 import game.InputHandler;
 import game.object.Entity.tank.Tank;
+import org.joml.Vector2f;
 
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.GLFW_KEY_RIGHT;
 
-public class Player {
+public class Player implements Entity {
 
     //Mainly target is the tank
     Tank tank;
@@ -20,10 +21,11 @@ public class Player {
 
     public void update()
     {
-        ProcessCommend();
+        Process();
     }
 
-    private void ProcessCommend()
+    @Override
+    public void Process()
     {
         //Recieving input for desired later actions
         if(InputHandler.keyState(GLFW_KEY_UP))
@@ -57,6 +59,20 @@ public class Player {
         }
     }
 
+    @Override
+    public Vector2f GetTargetPosition() {
+        return tank.getPosition();
+    }
+
+    @Override
+    public int GetFractionID() {
+        return tank.getFractionID();
+    }
+
+    @Override
+    public boolean OutOfScope() {
+        return false;
+    }
 
 
 }

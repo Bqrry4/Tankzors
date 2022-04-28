@@ -47,7 +47,7 @@ public class Tank extends GameObject {
     int TresHold = 30;
     double CountDown = 0;
 
-    public Tank(Scene scene, Texture tex, TextureRegion RegionID, int x, int y, int w, int h, Direction direction, HealthBar hb, Field field)
+    public Tank(Scene scene, Texture tex, TextureRegion RegionID, int x, int y, int w, int h, Direction direction, int fractionID, HealthBar hb, Field field)
     {
         this.scene = scene;
 
@@ -61,6 +61,7 @@ public class Tank extends GameObject {
 
         frameQuad = (float) region.w() / frames;
 
+        this.fractionID = fractionID;
         this.hb = hb;
         this.fb = field;
     }
@@ -213,6 +214,11 @@ public class Tank extends GameObject {
     public boolean CanAtack()
     {
         return CanAtack;
+    }
+
+    public int getFractionID()
+    {
+        return fractionID;
     }
 
 }

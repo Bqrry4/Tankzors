@@ -11,24 +11,25 @@ import renderer.Texture;
 
 public class MunitionFactory {
 
+    //It has to operate with a TextureMap !!
     static Texture shellTexture = ResourceManager.Instance().GetTexture("bullets");
     static TextureRegion[] regions = {new TextureRegion(0, 0, 24, 24),
                                 new TextureRegion(24, 0, 24, 24),
                                 new TextureRegion(72, 0, 24, 24)
                                 };
 
-    static public Munition SpawnShell(String type, Direction direction, Vector2f hitbox)
+    static public GameObject SpawnShell(String type, Direction direction, Vector2f position)
     {
         if(type.equals("shell")) {
-            return new Shell(direction, new Vector4f(hitbox, 24, 24), regions[0], shellTexture);
+            return new Shell(direction, new Vector4f(position, 24, 24), regions[0], shellTexture);
         }
 
         if(type.equals("plasma")) {
-            return new Shell(direction, new Vector4f(hitbox, 24, 24), regions[1], shellTexture);
+            return new Shell(direction, new Vector4f(position, 24, 24), regions[1], shellTexture);
         }
 
         if(type.equals("armored")) {
-            return new Shell(direction, new Vector4f(hitbox, 24, 24), regions[2], shellTexture);
+            return new Shell(direction, new Vector4f(position, 24, 24), regions[2], shellTexture);
         }
 
 

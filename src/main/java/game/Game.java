@@ -3,6 +3,7 @@ package game;
 import Managers.ResourceManager;
 import Managers.Settings;
 import com.sun.tools.javac.Main;
+import game.level.Level;
 import game.level.Scene;
 import game.menu.Button;
 import game.menu.Menu;
@@ -15,7 +16,7 @@ import static org.lwjgl.opengl.GL30.*;
 public class Game {
     private final Window MainWindow;
 
-    Scene scene;
+    Level level;
 
     public Game(int width, int height, String title)
     {
@@ -54,9 +55,9 @@ public class Game {
         Renderer.Instance().Init();
 
 
-        scene = new Scene();
-        scene.UpdateSize(width, height);
-        scene.Load();
+        level = new Level();
+//        level.UpdateSize(width, height);
+        level.Load();
 
         //Activate blend mode
         glEnable(GL_BLEND);
@@ -96,7 +97,7 @@ public class Game {
             }
             else
             {
-                scene.Process();
+                level.process();
             }
 
             MainWindow.SwapRenderBuffers();

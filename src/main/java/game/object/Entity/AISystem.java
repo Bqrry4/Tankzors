@@ -1,21 +1,23 @@
 package game.object.Entity;
 
-import auxiliar.Direction;
-import game.InputHandler;
-import game.object.Entity.tank.AStar;
-import game.object.Entity.tank.Tank;
+import auxiliar.PathFinding.PathFinder;
+import game.Controller.Entity;
+import game.Controller.Mediator;
+import auxiliar.PathFinding.AStar;
+import org.joml.Vector2f;
 import org.joml.Vector2i;
 
-import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_SPACE;
+public class AISystem implements Mediator {
 
-public class AISystem {
+    PathFinder pf;
 
-//    List<Tank> tanks = new ArrayList<Tank>();
-    AStar pf;
+    List<Entity> entities = new LinkedList<>();
 
+    //Add aswell goals, for enemy Unities
 
     public AISystem()
     {
@@ -43,9 +45,16 @@ public class AISystem {
                 {218,0,0,0,0,0,217,0,0,0,0,0,0,0,0,217},
                 {218,217,217,217,217,217,218,218,218,217,218,217,217,218,218,217}
         };
-        pf = new AStar(map2);
+        pf = new AStar(map2, new Vector2i(20));
     }
 
+
+    public void addComponent(Entity entity)
+    {
+        entities.add(entity);
+    }
+
+/*
     Tank stalked;
     Tank stalker;
 
@@ -58,17 +67,10 @@ public class AISystem {
     {
         stalked = t;
     }
-
-/*
-    public void addComponent(Tank t)
-    {
-        tanks.add(t);
-    }
 */
 
-    List<Vector2i> l = null;
 
-    public void ProcessCommend()
+/*    public void ProcessCommend()
     {
 
         Vector2i cure = new Vector2i((int) (stalker.getHitbox().x/20 + 1), (int) (stalker.getHitbox().y/20 + 1));
@@ -78,7 +80,7 @@ public class AISystem {
 //        tanks.get(0).MoveBy(20, Direction.Down);
         if(InputHandler.keyState(GLFW_KEY_SPACE))
         {
-            l = pf.solve(new Vector2i((int) (stalker.getHitbox().x/20 + 1), (int) (stalker.getHitbox().y/20 + 1)), new Vector2i((int) (stalked.getHitbox().x/20 + 1), (int) (stalked.getHitbox().y/20 + 1)));
+            l = pf.FindPath(new Vector2i((int) (stalker.getHitbox().x/20 + 1), (int) (stalker.getHitbox().y/20 + 1)), new Vector2i((int) (stalked.getHitbox().x/20 + 1), (int) (stalked.getHitbox().y/20 + 1)));
         }
 
 
@@ -104,9 +106,43 @@ public class AISystem {
        {
        }
 
+    }*/
+
+    public void Process()
+    {
+        //Using iterator for removing while iterating through
+        Iterator<Entity> iterator = entities.iterator();
+
+        while(iterator.hasNext())
+        {
+            Entity entity = iterator.next();
+            if(entity.OutOfScope())
+                iterator.remove();
+
+            entity.Process();
+        }
+
     }
 
+    @Override
+    public List<Vector2i> LeadMe(Entity ent) {
 
+        //calculate to what position
 
+        int fID = ent.GetFractionID();
 
+        Entity target = null;
+
+        for(Entity entity : entities)
+        {
+            if(fID != entity.GetFractionID())
+            {
+                target = entity;
+            }
+        }
+
+        Vector2f dst = (target != null) ? target.GetTargetPosition() : null;
+
+        return pf.FindPath(ent.GetTargetPosition(), dst);
+    }
 }

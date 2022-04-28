@@ -1,5 +1,7 @@
-package game.object.Entity.tank;
+package auxiliar.PathFinding;
 
+import org.joml.GeometryUtils;
+import org.joml.Vector2f;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
@@ -30,44 +32,18 @@ class Node implements Comparable<Node>
 }
 
 
-public class AStar {
+public class AStar implements PathFinder {
     private static final double INFINITY = 1.0 / 0.0;
 
-
-  /*  List<Integer> open = new ArrayList<>();
-    List<Integer> closed = new ArrayList<>();
-
-    int ROW, COL;
-
-    public void Search(int[][] grid, Vector2i src, Vector2i dst)
-    {
-        ROW = grid.length;
-        COL = grid[0].length;
-
-        if(!isValid(src.x, src.y))
-        {
-            System.out.println("Source invalid");
-            return;
-        }
-
-        if(!isValid(dst.x, dst.y))
-        {
-            System.out.println("Destination invalid");
-            return;
-        }
-
-    }
-
-    boolean isValid(int row, int col)
-    {
-        return (row >= 0) && (row< ROW) && (col >= 0) && (col < COL);
-    }
-*/
-
-    PriorityQueue<Node> openSet = new PriorityQueue<Node>();
-
+    PriorityQueue<Node> openSet = new PriorityQueue<>();
     Node[][] set;
-    public AStar(int[][] map) {
+    Vector2i GridSize;
+
+
+    public AStar(int[][] map, Vector2i GridSize)
+    {
+        this.GridSize = GridSize;
+
         set = new Node[map.length][map[0].length];
         for (int y = 0; y < map.length; ++y)
         {
@@ -87,7 +63,6 @@ public class AStar {
         {
             for(int x = 0; x < set[y].length; ++x)
             {
-
                 if(y>0)
                     set[y][x].neighbours.add(set[y-1][x]);
                 if(y<set.length-1)
@@ -96,10 +71,8 @@ public class AStar {
                     set[y][x].neighbours.add(set[y][x-1]);
                 if(x<set[y].length-1)
                     set[y][x].neighbours.add(set[y][x+1]);
-
             }
         }
-
     }
 
     double heuristic(Node a, Node b)
@@ -107,28 +80,34 @@ public class AStar {
         return Math.sqrt((a.position.x - b.position.x) * (a.position.x - b.position.x) + (a.position.y - b.position.y) * (a.position.y - b.position.y));
     }
 
-    public List<Vector2i> solve(Vector2i from, Vector2i to)
+    @Override
+    public List<Vector2i> FindPath(Vector2f from, Vector2f to)
     {
 
-        if(from.x == to.x && from.y == to.y)
+        if(from == null || to == null || from == to)
         {
             return null;
         }
 
-        for (int y = 0; y < set.length; ++y) {
-            for (int x = 0; x < set[y].length; ++x) {
+        //Clear the set
+        openSet.clear();
+        for (Node[] nodes : set) {
+            for (Node node : nodes) {
 
-                set[y][x].visited = false;
-                set[y][x].f = INFINITY;
-                set[y][x].g = INFINITY;
-                set[y][x].parrent = null;
+                node.visited = false;
+                node.f = INFINITY;
+                node.g = INFINITY;
+                node.parrent = null;
             }
         }
 
-        Node start = set[from.y][from.x];
-        Node goal = set[to.y][to.x];
+        //Converting real coordonates into grid-like ones
 
-        openSet.clear();
+        Vector2i first = new Vector2i((int) (from.x/GridSize.x), (int) (from.y/GridSize.y));
+        Vector2i second = new Vector2i((int) (to.x/GridSize.x), (int) (to.y/GridSize.y));
+
+        Node start = set[first.y][first.x];
+        Node goal = set[second.y][second.x];
 
         start.f = 0;
         start.g = heuristic(start, goal);
@@ -167,13 +146,18 @@ public class AStar {
 
         }
 
-        List<Vector2i> path = new LinkedList<>();
-
+        LinkedList<Vector2i> path = null;
         Node iter = goal;
-        while(iter.parrent != null)
+
+        if(iter.parrent != null)
         {
-            path.add(0, iter.position);
-            iter = iter.parrent;
+            path = new LinkedList<>();
+
+            while(iter.parrent != null)
+            {
+                path.addFirst(iter.position);
+                iter = iter.parrent;
+            }
         }
 
         return path;
