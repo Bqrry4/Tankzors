@@ -1,9 +1,5 @@
 package Managers;
 
-import auxiliar.Direction;
-import game.layer.TileLayer;
-import org.joml.Vector4f;
-
 public class Collision {
 
 

@@ -5,10 +5,13 @@ import auxiliar.Direction;
 import auxiliar.TextureRegion;
 import game.WindowTimer;
 import game.object.GameObject;
+import game.object.ObjectMediator;
 import org.joml.Vector4f;
 import renderer.Texture;
 
 public class Shell extends GameObject implements Munition {
+
+    ObjectMediator mediator;
 
     int type = 0;
 
@@ -22,11 +25,14 @@ public class Shell extends GameObject implements Munition {
 
     float Speed = 50;
 
-    //
     Texture tex;
 
-    public Shell(Direction direction, Vector4f hitbox, TextureRegion region, Texture tex)
+    public Shell(ObjectMediator mediator, Direction direction, Vector4f hitbox, TextureRegion region, Texture tex)
     {
+        this.mediator = mediator;
+
+        this.ObjectType = 2;
+
         this.hitbox = hitbox;
 
         this.region = region;
@@ -63,6 +69,6 @@ public class Shell extends GameObject implements Munition {
     @Override
     public void render() {
 
-        Renderer.Instance().Draw(tex, new Vector4f(region.x(), region.y(), region.w(), region.h()), new Vector4f(hitbox.x *4, hitbox.y *4, hitbox.z *4, hitbox.w*4), direction);
+        Renderer.Instance().Draw(tex, new Vector4f(region.x(), region.y(), region.w(), region.h()), new Vector4f(hitbox.x *2, hitbox.y *2, region.w()*2, region.h()*2), direction);
     }
 }

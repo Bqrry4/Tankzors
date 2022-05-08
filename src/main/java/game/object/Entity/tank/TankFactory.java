@@ -1,37 +1,73 @@
 package game.object.Entity.tank;
 
-import Managers.ResourceManager;
 import auxiliar.Direction;
-import auxiliar.TextureRegion;
 import game.level.IScene;
 import game.object.GameObject;
-import renderer.Texture;
+import org.joml.Vector2f;
+import renderer.TextureMap;
 
 public class TankFactory {
 
-    static IScene scene = null;
+    static IScene Scene = null;
+
+    static TextureMap textureMap = null;
 
     //Not the greatest idea, but...
-    static void SetScene()
+    public static void SetScene(IScene scene)
     {
-        
+        Scene = scene;
     }
 
-    static Texture tankTexture = ResourceManager.Instance().GetTexture("tank");
-    static TextureRegion[] regions = {new TextureRegion(0, 0, 24, 24),
-            new TextureRegion(24, 0, 24, 24),
-            new TextureRegion(72, 0, 24, 24)
-    };
-
-
-    static public GameObject SpawnTank(String type, Direction direction)
+    public static void SetTextureMap(TextureMap texMap)
     {
-        if(type.equals("shell")) {
+        textureMap = texMap;
+    }
 
-            return new Tank(scene, textureMap.getTexture(), textureMap.getRegion(0), 18, 18, 24, 24, Direction.Down, 0, new HealthBar(textureMap.getRegion(6), 12, textureMap.getTexture()), new Field(0, textureMap.getRegion(5), 6, textureMap.getTexture()));
+    static public GameObject SpawnTank(String type, Direction direction, Vector2f position, int Fraction)
+    {
+        //If scene is not set, ignore request
+        if(Scene == null) return null;
+
+        //Constructing HealthBar component
+        HealthBar healthBar = null;
+        switch (Fraction)
+        {
+            case 0:
+            case 1:
+                healthBar = new HealthBar(textureMap.getRegion(6), textureMap.getTexture());
+                break;
+            case 2:
+                healthBar = new HealthBar(textureMap.getRegion(7), textureMap.getTexture());
+                break;
+            case 3:
+                healthBar = new HealthBar(textureMap.getRegion(8), textureMap.getTexture());
+                break;
         }
-        return null;
+
+        //Constructing field component
+        Field field = new Field(Fraction, textureMap.getRegion(5), textureMap.getTexture());
+
+
+        //Construct the main object
+        Tank tank = null;
+        if(type.equals("light")) {
+            tank =  new Tank(Scene.getMediator(),textureMap.getTexture(), textureMap.getRegion(0), (int) position.x, (int) position.y, 24, 24, direction, Fraction, healthBar, field);
+        }
+        if(type.equals("heavy")) {
+            tank =  new Tank(Scene.getMediator(),textureMap.getTexture(), textureMap.getRegion(1), (int) position.x, (int) position.y, 24, 24, direction, Fraction, healthBar, field);
+        }
+        if(type.equals("siege")) {
+            tank =  new Tank(Scene.getMediator(),textureMap.getTexture(), textureMap.getRegion(2), (int) position.x, (int) position.y, 24, 24, direction, Fraction, healthBar, field);
+        }
+        if(type.equals("kamikaze")) {
+            tank =  new Tank(Scene.getMediator(),textureMap.getTexture(), textureMap.getRegion(3), (int) position.x, (int) position.y, 24, 24, direction, Fraction, healthBar, field);
+        }
+        if(type.equals("turret")) {
+            tank =  new Tank(Scene.getMediator(),textureMap.getTexture(), textureMap.getRegion(4), (int) position.x, (int) position.y, 24, 24, direction, Fraction, healthBar, field);
+        }
+
+
+//        Scene.addObject(tank);
+        return tank;
     }
-
-
 }

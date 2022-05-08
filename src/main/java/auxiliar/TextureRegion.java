@@ -5,10 +5,12 @@ import org.joml.Vector4i;
 public class TextureRegion {
 
         private Vector4i region;
+        private int frames;
 
-        public TextureRegion(int x, int y, int w, int h)
+        public TextureRegion(int x, int y, int w, int h, int frames)
         {
             region = new Vector4i(x, y, w, h);
+            this.frames = frames;
         }
 
         public TextureRegion(Vector4i region)
@@ -32,4 +34,5 @@ public class TextureRegion {
         {
             return region.w;
         }
+        public int frames() {return this.frames;}
 }

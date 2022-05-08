@@ -4,7 +4,7 @@ import org.joml.Vector2i;
 
 import java.util.List;
 
-public interface Mediator {
+public interface EntityMediator {
 
     List<Vector2i> LeadMe(Entity con);
 

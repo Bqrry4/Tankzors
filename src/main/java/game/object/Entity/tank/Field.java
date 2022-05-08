@@ -16,19 +16,17 @@ public class Field {
 
     TextureRegion region;
 
-    final int frames;
     final float frameQuad;
 
     Texture tex;
 
-    public Field(int type, TextureRegion region, int frames, Texture tex)
+    public Field(int type, TextureRegion region, Texture tex)
     {
         this.type = type;
 
         this.region = region;
 
-        this.frames = frames;
-        frameQuad = (float) region.w() / frames;
+        frameQuad = (float) region.w() / region.frames();
 
         this.tex = tex;
 

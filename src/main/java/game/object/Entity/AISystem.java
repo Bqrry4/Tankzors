@@ -2,7 +2,7 @@ package game.object.Entity;
 
 import auxiliar.PathFinding.PathFinder;
 import game.Controller.Entity;
-import game.Controller.Mediator;
+import game.Controller.EntityMediator;
 import auxiliar.PathFinding.AStar;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
@@ -11,7 +11,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-public class AISystem implements Mediator {
+public class AISystem implements EntityMediator {
 
     PathFinder pf;
 

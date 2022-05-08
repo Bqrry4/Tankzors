@@ -1,7 +1,6 @@
-package game.layer;
+package game.level.layer;
 
 import Managers.Renderer;
-import Managers.ResourceManager;
 import org.joml.Vector4f;
 import renderer.Texture;
 

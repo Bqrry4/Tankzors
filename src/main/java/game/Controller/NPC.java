@@ -10,7 +10,7 @@ import java.util.List;
 public class NPC implements Entity {
 
     //A mediator to ask what to do
-    Mediator mediator;
+    EntityMediator entityMediator;
 
     List<Vector2i> path = null;
 
@@ -18,9 +18,9 @@ public class NPC implements Entity {
     Tank tank;
 
 
-    public NPC(Mediator mediator, Tank tank)
+    public NPC(EntityMediator entityMediator, Tank tank)
     {
-        this.mediator = mediator;
+        this.entityMediator = entityMediator;
         this.tank = tank;
     }
 
@@ -32,14 +32,15 @@ public class NPC implements Entity {
             if (tank.Idle()) {
                 Vector2i current = new Vector2i((int) (tank.getPosition().x/20), (int) (tank.getPosition().y/20));
                 Vector2i got = path.get(0);
+
                 if (current.x - got.x > 0)
                     tank.MoveBy(20, Direction.Left);
-                if (current.x - got.x < 0)
+                else if (current.x - got.x < 0)
                     tank.MoveBy(20, Direction.Right);
 
-                if (current.y - got.y > 0)
+                else if (current.y - got.y > 0)
                     tank.MoveBy(20, Direction.Up);
-                if (current.y - got.y < 0)
+                else if (current.y - got.y < 0)
                     tank.MoveBy(20, Direction.Down);
 
                 //Default case current = got
@@ -51,7 +52,7 @@ public class NPC implements Entity {
         }
         else
         {
-            path = mediator.LeadMe(this);
+            path = entityMediator.LeadMe(this);
             //if null should be move random
         }
 

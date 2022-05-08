@@ -106,6 +106,7 @@ public class AStar implements PathFinder {
         Vector2i first = new Vector2i((int) (from.x/GridSize.x), (int) (from.y/GridSize.y));
         Vector2i second = new Vector2i((int) (to.x/GridSize.x), (int) (to.y/GridSize.y));
 
+
         Node start = set[first.y][first.x];
         Node goal = set[second.y][second.x];
 
@@ -153,6 +154,7 @@ public class AStar implements PathFinder {
         {
             path = new LinkedList<>();
 
+//            iter = iter.parrent;
             while(iter.parrent != null)
             {
                 path.addFirst(iter.position);

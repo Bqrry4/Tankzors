@@ -5,11 +5,14 @@ import auxiliar.Direction;
 import auxiliar.TextureRegion;
 import game.Controller.NPC;
 import game.Controller.Player;
-import game.layer.TileLayer;
+import game.level.layer.InteractionLayer;
+import game.level.layer.TileLayer;
 import game.object.Entity.AISystem;
-import game.object.Entity.tank.Field;
-import game.object.Entity.tank.HealthBar;
 import game.object.Entity.tank.Tank;
+import game.object.Entity.tank.TankFactory;
+import game.object.GameObject;
+import game.object.Munition.MunitionFactory;
+import org.joml.Vector2f;
 import renderer.TextureMap;
 
 public class Level {
@@ -39,40 +42,49 @@ public class Level {
         textureMap.setTexture(ResourceManager.Instance().GetTexture("tanks"));
 
         TextureRegion[] Indices = {
-                new TextureRegion(0, 0, 384, 24),
-                new TextureRegion(0, 24, 384, 24),
-                new TextureRegion(0, 48, 384, 24),
-                new TextureRegion(0, 72, 384, 24),
-                new TextureRegion(0, 96, 384, 28),
-                new TextureRegion(0, 122, 168, 28),
+                new TextureRegion(0, 0, 384, 24, 16),
+                new TextureRegion(0, 24, 384, 24,16),
+                new TextureRegion(0, 48, 384, 24, 16),
+                new TextureRegion(0, 72, 384, 24, 16),
+                new TextureRegion(0, 96, 352, 26, 16),
 
-                new TextureRegion(0, 150, 288, 4),
-                new TextureRegion(28, 122, 168, 28),
+                new TextureRegion(0, 122, 168, 28, 6),
 
-
+                new TextureRegion(0, 150, 288, 4, 12),
+                new TextureRegion(0, 154, 288, 4, 12),
+                new TextureRegion(0, 158, 288, 4, 12),
         };
         textureMap.setIndices(Indices);
 
-        TextureMap tex2 = new TextureMap();
-        tex2.setTexture(ResourceManager.Instance().GetTexture("bullets"));
+        TankFactory.SetTextureMap(textureMap);
+        TankFactory.SetScene(scene);
+
+        TextureMap textureMapB = new TextureMap();
+        textureMapB.setTexture(ResourceManager.Instance().GetTexture("bullets"));
+
+        TextureRegion[] IndicesB = {
+                new TextureRegion(0, 0, 24, 24, 1),
+                new TextureRegion(24, 0, 24, 24,1),
+                new TextureRegion(48, 0, 24, 24, 1),
+                new TextureRegion(72, 0, 24, 24, 1),
+                new TextureRegion(96, 0, 24, 24, 1),
+                new TextureRegion(120, 0, 24, 24, 1),
+
+                new TextureRegion(0, 24, 96, 24, 4),
+
+                new TextureRegion(0, 150, 288, 4, 12),
+                new TextureRegion(0, 154, 288, 4, 12),
+                new TextureRegion(0, 158, 288, 4, 12),
+        };
+        textureMapB.setIndices(IndicesB);
+
+        MunitionFactory.SetTextureMap(textureMapB);
+        MunitionFactory.SetScene(scene);
 
 
-        Tank tank = new Tank(scene, textureMap.getTexture(), textureMap.getRegion(0), 18, 18, 24, 24, Direction.Down,0, new HealthBar(textureMap.getRegion(6) ,12, textureMap.getTexture()), new Field(0, textureMap.getRegion(5), 6, textureMap.getTexture()));
-        scene.addObject(tank);
+        //tt
 
 
-        Player player = new Player(tank);
-        system.addComponent(player);
-
-
-        tank = new Tank(scene, textureMap.getTexture(), textureMap.getRegion(0), 18, 18, 24, 24, Direction.Down,1, new HealthBar(textureMap.getRegion(6) ,12, textureMap.getTexture()), new Field(0, textureMap.getRegion(7), 6, textureMap.getTexture()));
-
-
-        NPC npc = new NPC(system, tank);
-        system.addComponent(npc);
-
-
-        scene.addObject(tank);
 
 
         int[][] map = new int[][] {
@@ -126,6 +138,31 @@ public class Level {
                 {218,217,217,217,217,217,218,218,218,217,218,217,217,218,218,217}
         };
         scene.addLayer(new TileLayer(ResourceManager.Instance().GetTexture("walls"), 20, 20, map2));
+
+        GameObject[][] layer = new GameObject[map2.length][map2[1].length];
+
+        scene.addObjectMediator(new InteractionLayer(20, 20, layer));
+
+
+        TextureMap tex2 = new TextureMap();
+        tex2.setTexture(ResourceManager.Instance().GetTexture("bullets"));
+
+
+        GameObject tank = TankFactory.SpawnTank("light", Direction.Down, new Vector2f(18, 218), 0);
+        scene.addObject(tank);
+
+
+        Player player = new Player((Tank)tank);
+        system.addComponent(player);
+
+
+        tank = TankFactory.SpawnTank("light", Direction.Down, new Vector2f(38, 38), 2);
+
+
+        NPC npc = new NPC(system, (Tank)tank);
+        system.addComponent(npc);
+
+        scene.addObject(tank);
 
     }
 

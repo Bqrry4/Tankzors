@@ -7,18 +7,18 @@ import game.WindowTimer;
 import game.level.Scene;
 import game.object.GameObject;
 import game.object.Munition.MunitionFactory;
+import game.object.ObjectMediator;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import renderer.Texture;
 
 public class Tank extends GameObject {
 
-    //A reference to scene that it belongs
-    Scene scene;
+    ObjectMediator mediator;
 
     Texture tex;
     TextureRegion region;
-    final int frames = 16;
+
     final float frameQuad;
 
     int fractionID;
@@ -47,9 +47,12 @@ public class Tank extends GameObject {
     int TresHold = 30;
     double CountDown = 0;
 
-    public Tank(Scene scene, Texture tex, TextureRegion RegionID, int x, int y, int w, int h, Direction direction, int fractionID, HealthBar hb, Field field)
+    public Tank(ObjectMediator mediator, Texture tex, TextureRegion RegionID, int x, int y, int w, int h, Direction direction, int fractionID, HealthBar hb, Field field)
     {
-        this.scene = scene;
+        this.mediator = mediator;
+
+        this.ObjectType = 1;
+//        this.scene = scene;
 
         this.tex = tex;
         this.region = RegionID;
@@ -59,11 +62,14 @@ public class Tank extends GameObject {
         this.direction = direction;
         this.desired = this.direction;
 
-        frameQuad = (float) region.w() / frames;
+        frameQuad = (float) region.w() / region.frames();
 
         this.fractionID = fractionID;
         this.hb = hb;
         this.fb = field;
+
+        //Notifing mediator about current position
+        mediator.notify(this, new Vector2f(hitbox.x, hitbox.y));
     }
 
     @Override
@@ -81,32 +87,43 @@ public class Tank extends GameObject {
 
     private void Movement()
     {
-
         //If in animation
-        float sign = Math.signum(toFrame - frame);
+        float deltaframe = toFrame - frame;
+        float sign = Math.signum(deltaframe);
         if(sign != 0)
         {
-            frame += sign * 20 * WindowTimer.Instance().GetDt();
+            //Change frame increment direction flag
+            float chdir = (Math.abs(deltaframe) > region.frames()/2) ? (-1) : (1);
 
-            if(Math.signum(toFrame - frame) != sign )
+            frame += chdir * sign * 20 * WindowTimer.Instance().GetDt();
+
+            if(chdir != -1)
             {
-                frame = toFrame;
-                direction = desired;
-                rotatingFlag = false;
+                if(Math.signum(toFrame - frame) != sign)
+                {
+                    frame = toFrame;
+                    direction = desired;
+                    rotatingFlag = false;
+                }
             }
-            if(frame > 15)
-                frame = 0;
-            if(frame < 0)
-                frame = 15;
+            else
+            {
+                if(frame < 0)
+                    frame = region.frames();
+                else
+                if(frame > region.frames()-1)
+                    frame = -1;
+            }
             return;
         }
 
-
+        //Rotation
         //desired direction - current direcion
         int sg = desired.value - direction.value;
         if(sg != 0)
         {
-            toFrame = sg * 4 + frame;
+            //how much to go + where is it now
+            toFrame = sg * (region.frames()/4) + (int)frame;
             return;
         }
 
@@ -159,9 +176,18 @@ public class Tank extends GameObject {
 
     public void MoveBy(float d, Direction direction)
     {
-        if(this.direction == direction)
+        if(this.direction != direction)
         {
-            if(!movingFlag && !collideFlag && !rotatingFlag) {
+            if(Idle())
+            {
+                desired = direction;
+                //Rotate to direction
+                rotatingFlag = true;
+            }
+        }
+        else
+        {
+            if(!collideFlag && Idle()) {
                 switch (direction) {
                     case Up:
                         targetPosition.y -= d;
@@ -178,14 +204,7 @@ public class Tank extends GameObject {
                 }
             }
         }
-        else
-        {
-            if(!movingFlag && !rotatingFlag)
-            {
-                desired = direction;
-                rotatingFlag = true;
-            }
-        }
+
     }
 
     public void WantToAtack(boolean value)
@@ -200,7 +219,10 @@ public class Tank extends GameObject {
         }*/
 
         //
-        scene.addObject(MunitionFactory.spawn());
+//        scene.addObject(MunitionFactory.spawn());
+
+        //Will spawn on the setted scene...
+        MunitionFactory.SpawnShell("armored", direction, new Vector2f(hitbox.x, hitbox.y));
 
 
         CanAtack = value;

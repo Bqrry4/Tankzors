@@ -2,17 +2,10 @@ package game.level;
 
 import Managers.Renderer;
 import Managers.ResourceManager;
-import game.layer.TileLayer;
-import game.object.Entity.AISystem;
-import game.Controller.Player;
-import game.object.Entity.tank.Field;
-import game.object.Entity.tank.HealthBar;
-import game.object.Entity.tank.Tank;
-import renderer.TextureMap;
-import auxiliar.TextureRegion;
-import game.layer.Layer;
-import auxiliar.Direction;
+import game.level.layer.InteractionLayer;
+import game.level.layer.Layer;
 import game.object.GameObject;
+import game.object.ObjectMediator;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
@@ -26,6 +19,7 @@ public class Scene implements IScene {
     private final Vector2i size;
     //List of Objects
     List<GameObject> objectList;
+    ObjectMediator mediator;
     //List of Layers
     List<Layer> layerList;
 
@@ -47,6 +41,9 @@ public class Scene implements IScene {
 
     public void Process()
     {
+
+        Interaction();
+
         Update();
 
         Render();
@@ -58,6 +55,13 @@ public class Scene implements IScene {
         size.y = h;
     }
 
+    //Checking for interaction between objects
+    private void Interaction()
+    {
+        //Object with object
+//       Shellul ar trebui sa creeze explozii, exploziile de pe levvel dau damage//NU
+
+    }
 
     private void Update()
     {
@@ -93,9 +97,21 @@ public class Scene implements IScene {
         objectList.add(obj);
     }
 
+    public void addObjectMediator(ObjectMediator med)
+    {
+        mediator = med;
+    }
+
+
+
     @Override
     public void addLayer(Layer lay)
     {
         layerList.add(lay);
+    }
+
+    @Override
+    public ObjectMediator getMediator() {
+        return mediator;
     }
 }

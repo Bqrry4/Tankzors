@@ -1,4 +1,4 @@
-package game.layer;
+package game.level.layer;
 
 public abstract class Layer {
 
