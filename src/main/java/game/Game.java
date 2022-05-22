@@ -10,8 +10,12 @@ import game.menu.Menu;
 import game.menu.subMenu;
 import gui.Text;
 import Managers.Renderer;
+import org.joml.Vector4f;
 
 import static org.lwjgl.opengl.GL30.*;
+
+//TO DO EXCEPTION PENTRU FONT
+
 
 public class Game {
     private final Window MainWindow;
@@ -39,7 +43,10 @@ public class Game {
         ResourceManager.Instance().LoadTexture("assets/map/ground.png", "ground");
         ResourceManager.Instance().LoadTexture("assets/map/walls.png", "walls");
         ResourceManager.Instance().LoadTexture("assets/bullets.png", "bullets");
-        ResourceManager.Instance().LoadTexture("assets/gui/menu_pict.png", "menu");
+        ResourceManager.Instance().LoadTexture("assets/gui/menu_back.png", "menu");
+
+        ResourceManager.Instance().LoadFont("assets/gui/Baloo2-Medium.ttf", "font");
+
 
         ResourceManager.Instance().GetTexture("tanks").BindByOrder();
         ResourceManager.Instance().GetTexture("ground").BindByOrder();
@@ -48,8 +55,6 @@ public class Game {
         ResourceManager.Instance().GetTexture("menu").BindByOrder();
 
 
-
-//        ResourceManager.Instance().LoadFont("assets/gui/Baloo2-Medium.ttf", "font");
 
 
         Renderer.Instance().Init();
@@ -70,19 +75,18 @@ public class Game {
 
     public void run()
     {
-        //Menu instantiation
-/*        subMenu MainMenu = new subMenu("MainMenu");
+        //Menu instantiation block
+        subMenu MainMenu = new subMenu("MainMenu");
 
-        Button Start = new Button(new Vector4f((float) Settings.getWidth()/2 - 70, 50, 140, 40), new Text("Start", ResourceManager.Instance().GetFont("font")));
-        Button Exit = new Button(new Vector4f((float) Settings.getWidth()/2 - 70, 150, 140, 40), new Text("EXIT", ResourceManager.Instance().GetFont("font")));
+        Button Start = new Button(new Vector4f((float) Settings.getWidth() / 2 - 70, 50, 140, 40), new Text("Start", ResourceManager.Instance().GetFont("font")));
+        Button Exit = new Button(new Vector4f((float) Settings.getWidth() / 2 - 70, 150, 140, 40), new Text("EXIT", ResourceManager.Instance().GetFont("font")));
 
         MainMenu.add(Start);
         MainMenu.add(Exit);
 
         Menu menu = new Menu(ResourceManager.Instance().GetTexture("menu"));
         menu.SetMenuAttribute(MainMenu);
-//        menu.setTrigger(true);*/
-
+        menu.setTrigger(true);
 
         //Game Loop
         while(!MainWindow.ShouldClose())
@@ -91,9 +95,9 @@ public class Game {
             WindowTimer.Instance().Ticks();
 
 
-            if(/*menu.isTriggered()*/false)
+            if(menu.isTriggered())
             {
-//                menu.Process();
+                menu.Process();
             }
             else
             {

@@ -1,5 +1,7 @@
 package Managers;
 
+import org.joml.Vector4f;
+
 public class Collision {
 
 
@@ -53,4 +55,51 @@ public class Collision {
         }
 
     }*/
+
+
+
+    public static boolean checkCollision(Vector4f a, Vector4f b)
+    {
+        //The sides of the rectangles
+        float leftA, leftB;
+        float rightA, rightB;
+        float topA, topB;
+        float bottomA, bottomB;
+
+        //Calculate the sides of rect A
+        leftA = a.x;
+        rightA = a.x + a.z;
+        topA = a.y;
+        bottomA = a.y + a.w;
+
+        //Calculate the sides of rect B
+        leftB = b.x;
+        rightB = b.x + b.z;
+        topB = b.y;
+        bottomB = b.y + b.w;
+
+        //If any of the sides from A are outside of B
+        if( bottomA <= topB )
+        {
+            return false;
+        }
+
+        if( topA >= bottomB )
+        {
+            return false;
+        }
+
+        if( rightA <= leftB )
+        {
+            return false;
+        }
+
+        if( leftA >= rightB )
+        {
+            return false;
+        }
+
+        //If none of the sides from A are outside B
+        return true;
+    }
 }

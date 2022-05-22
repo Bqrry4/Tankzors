@@ -2,7 +2,6 @@ package game.object.Munition;
 
 import auxiliar.Direction;
 import game.level.IScene;
-import game.level.Scene;
 import game.object.GameObject;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -26,8 +25,7 @@ public class MunitionFactory {
         textureMap = texMap;
     }
 
-
-    static public GameObject SpawnShell(String type, Direction direction, Vector2f position)
+    static public GameObject SpawnShell(String type, Direction direction, Vector2f position, int Fraction)
     {
         GameObject munition = null;
         if(type.equals("shell")) {
@@ -38,7 +36,7 @@ public class MunitionFactory {
                 pos.w = 6;
             }
 
-            munition = new Shell(Scene.getMediator(), direction, pos, textureMap.getRegion(0), textureMap.getTexture());
+            munition = new Shell(Scene.getMediator(), direction, pos, textureMap.getRegion(0), textureMap.getTexture(), Fraction);
         }
 
         if(type.equals("plasma")) {
@@ -49,7 +47,7 @@ public class MunitionFactory {
                 pos.w = 6;
             }
 
-            munition = new Shell(Scene.getMediator(), direction, pos, textureMap.getRegion(1), textureMap.getTexture());
+            munition = new Shell(Scene.getMediator(), direction, pos, textureMap.getRegion(1), textureMap.getTexture(), Fraction);
         }
 
         if(type.equals("armored")) {
@@ -59,9 +57,17 @@ public class MunitionFactory {
                 pos.z = 12;
                 pos.w = 6;
             }
-            munition = new Shell(Scene.getMediator(), direction, pos, textureMap.getRegion(3), textureMap.getTexture());
+            munition = new Shell(Scene.getMediator(), direction, pos, textureMap.getRegion(3), textureMap.getTexture(), Fraction);
         }
         Scene.addObject(munition);
+
+        return null;
+    }
+
+    static public GameObject SpawnExplosion()
+    {
+
+
 
         return null;
     }

@@ -20,7 +20,7 @@ public class Level {
     //Interaction between object (Front-End?)
     Scene scene;
 
-    //Behavior of NPC
+    //Behavior of NPC (Back-End?)
     AISystem system;
 
 
@@ -37,7 +37,10 @@ public class Level {
     {
 
         //There should be the loading from database
+        //Actually not a good idea, so later parse from a file
 
+
+        //Initializing the textureMaps and assign those to factories
         TextureMap textureMap = new TextureMap();
         textureMap.setTexture(ResourceManager.Instance().GetTexture("tanks"));
 
@@ -82,9 +85,11 @@ public class Level {
         MunitionFactory.SetScene(scene);
 
 
-        //tt
 
 
+
+
+        //Level independent part
 
 
         int[][] map = new int[][] {
@@ -139,9 +144,8 @@ public class Level {
         };
         scene.addLayer(new TileLayer(ResourceManager.Instance().GetTexture("walls"), 20, 20, map2));
 
-        GameObject[][] layer = new GameObject[map2.length][map2[1].length];
 
-        scene.addObjectMediator(new InteractionLayer(20, 20, layer));
+        scene.addObjectMediator(new InteractionLayer(20, 20, map2.length, map2[1].length));
 
 
         TextureMap tex2 = new TextureMap();

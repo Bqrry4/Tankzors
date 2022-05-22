@@ -8,17 +8,15 @@ import renderer.Texture;
 public class Field {
 
     //5 types
-    int type = 0; //0,123
+    private int type = 0; //0,123
 
     //Shield Points
-    final int MaxSP = 3;
-    int SP = 0;
+    private final int MaxSP = 3;
+    private int SP = 0;
 
-    TextureRegion region;
-
-    final float frameQuad;
-
-    Texture tex;
+    private TextureRegion region;
+    private final float frameQuad;
+    private Texture tex;
 
     public Field(int type, TextureRegion region, Texture tex)
     {
@@ -55,6 +53,16 @@ public class Field {
         Renderer.Instance().Draw(tex, new Vector4f(region.x() + frameQuad * state, region.y(), frameQuad, region.h()), new Vector4f((position.x + position.z/2 - frameQuad/2)*2 , (position.y + position.w/2 - (float) region.h()/2)*2, frameQuad*2, region.h()*2));
     }
 
+    public int getSP()
+    {
+        return SP;
+    }
 
+    public void Absorb(int dmg)
+    {
+        SP -= dmg;
+        if(SP < 0)
+            SP = 0;
+    }
 
 }

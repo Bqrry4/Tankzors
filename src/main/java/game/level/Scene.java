@@ -2,6 +2,7 @@ package game.level;
 
 import Managers.Renderer;
 import Managers.ResourceManager;
+import game.Controller.Entity;
 import game.level.layer.InteractionLayer;
 import game.level.layer.Layer;
 import game.object.GameObject;
@@ -9,6 +10,7 @@ import game.object.ObjectMediator;
 import org.joml.Vector2i;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,7 +29,7 @@ public class Scene implements IScene {
     public Scene()
     {
         //Just initializing
-        size = new Vector2i(100);
+        size = new Vector2i(1280, 720);
 
         objectList = new LinkedList<>();
         layerList = new ArrayList<>();
@@ -67,10 +69,23 @@ public class Scene implements IScene {
     {
 
         //update objects state
-        for(GameObject object : objectList)
+/*        for(GameObject object : objectList)
         {
             object.update();
+        }*/
+
+        //Using iterator for removing while iterating through
+        Iterator<GameObject> iterator = objectList.iterator();
+
+        while(iterator.hasNext())
+        {
+            GameObject object = iterator.next();
+            if(!object.ShouldExist())
+                iterator.remove();
+
+            object.update();
         }
+
 
     }
 

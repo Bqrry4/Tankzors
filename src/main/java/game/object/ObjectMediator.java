@@ -4,6 +4,7 @@ import org.joml.Vector2f;
 
 public interface ObjectMediator {
 
-    void notify(GameObject obj, Vector2f position);
+    void notifyCurrent(GameObject obj);
+    boolean notifyDesired(GameObject obj, Vector2f position);
 
 }

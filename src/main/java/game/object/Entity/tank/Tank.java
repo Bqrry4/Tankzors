@@ -16,36 +16,35 @@ public class Tank extends GameObject {
 
     ObjectMediator mediator;
 
-    Texture tex;
-    TextureRegion region;
+    //Render part
+    private Texture tex;
+    private TextureRegion region;
+    private final float frameQuad;
+    private float frame = 0;
 
-    final float frameQuad;
+    //Components
+    private int fractionID;
+    private HealthBar hb;
+    private Field fb;
 
-    int fractionID;
-
-    HealthBar hb;
-
-    Field fb;
-
-    float Speed = 50;
-
-    private Direction direction;
-    float frame = 0;
+    //Movement part
+    private float Speed = 50;
 
     //Parameters for object transition
     private Vector2f targetPosition;
     private Direction desired;
-    float toFrame = 0;
+    private float toFrame = 0;
 
-    boolean rotatingFlag = false;
-    boolean movingFlag = false;
-    boolean collideFlag = false; //Has collision on the active direction
+    //State flags
+    private boolean rotatingFlag = false;
+    private boolean movingFlag = false;
+    private boolean collideFlag = false; //Has collision on the active direction
 
 
     //Atacking part
-    boolean CanAtack = false;
-    int TresHold = 30;
-    double CountDown = 0;
+    private boolean CanAtack = false;
+    private double TresHold = 0.6f;
+    private double CountDown = TresHold;
 
     public Tank(ObjectMediator mediator, Texture tex, TextureRegion RegionID, int x, int y, int w, int h, Direction direction, int fractionID, HealthBar hb, Field field)
     {
@@ -69,12 +68,13 @@ public class Tank extends GameObject {
         this.fb = field;
 
         //Notifing mediator about current position
-        mediator.notify(this, new Vector2f(hitbox.x, hitbox.y));
+        mediator.notifyDesired(this, new Vector2f(hitbox.x + hitbox.z/2, hitbox.y + hitbox.w/2));
     }
 
     @Override
     public void update()
     {
+        CountDowns();
         Movement();
     }
 
@@ -140,6 +140,10 @@ public class Tank extends GameObject {
                 hitbox.x = targetPosition.x;
                 movingFlag = false;
             }
+
+            //Notifing mediator about current position
+            mediator.notifyCurrent(this);
+
             return;
         }
 
@@ -155,8 +159,25 @@ public class Tank extends GameObject {
                 hitbox.y = targetPosition.y;
                 movingFlag = false;
             }
+
+            //Notifing mediator about current position
+            mediator.notifyCurrent(this);
             return;
         }
+    }
+
+    private void CountDowns()
+    {
+        //Atack CountDown
+        if(CountDown < TresHold)
+        {
+            CountDown += WindowTimer.Instance().GetDt();
+        }
+        else
+        {
+            CanAtack = true;
+        }
+
     }
 
     public void SetCollideFlag(boolean value)
@@ -169,25 +190,15 @@ public class Tank extends GameObject {
         return collideFlag;
     }
 
-    public Direction Direction()
-    {
-        return direction;
-    }
-
-    public void MoveBy(float d, Direction direction)
-    {
-        if(this.direction != direction)
-        {
-            if(Idle())
-            {
+    public void MoveBy(float d, Direction direction) {
+        if (this.direction != direction) {
+            if (Idle()) {
                 desired = direction;
                 //Rotate to direction
                 rotatingFlag = true;
             }
-        }
-        else
-        {
-            if(!collideFlag && Idle()) {
+        } else {
+            if (!collideFlag && Idle()) {
                 switch (direction) {
                     case Up:
                         targetPosition.y -= d;
@@ -202,31 +213,27 @@ public class Tank extends GameObject {
                         targetPosition.x += d;
                         break;
                 }
+                if(!mediator.notifyDesired(this, new Vector2f(targetPosition.x + hitbox.z/2, targetPosition.y + hitbox.w/2)))
+                {
+                    targetPosition.x = hitbox.x;
+                    targetPosition.y = hitbox.y;
+                }
             }
         }
-
     }
 
-    public void WantToAtack(boolean value)
+
+    public void WantToAtack()
     {
-/*        if(CountDown < TresHold)
+        if(!rotatingFlag && CanAtack)
         {
-            CountDown += WindowTimer.Instance().GetDt();
+            MunitionFactory.SpawnShell("armored", direction, new Vector2f(hitbox.x, hitbox.y), fractionID);
+            CanAtack = false;
+            //Reset countdown
+            CountDown = 0f;
         }
-        else
-        {
-
-        }*/
-
-        //
-//        scene.addObject(MunitionFactory.spawn());
-
-        //Will spawn on the setted scene...
-        MunitionFactory.SpawnShell("armored", direction, new Vector2f(hitbox.x, hitbox.y));
-
-
-        CanAtack = value;
     }
+
 
     public boolean Idle()
     {
@@ -236,6 +243,22 @@ public class Tank extends GameObject {
     public boolean CanAtack()
     {
         return CanAtack;
+    }
+
+    public void RecieveDamage(int dmg)
+    {
+        if(fb.getSP() > 0)
+        {
+            fb.Absorb(dmg);
+        }
+        else
+        {
+            hb.TakeDamage(dmg);
+            if(hb.HealthPoints() <= 0)
+            {
+                Existence = false;
+            }
+        }
     }
 
     public int getFractionID()

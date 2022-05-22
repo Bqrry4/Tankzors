@@ -9,14 +9,14 @@ import renderer.TextureMap;
 
 public class HealthBar {
 
-    final int MaxHP = 100;
-    int HP = 53;
+    private final int MaxHP = 100;
+    private int HP = 53;
 
-    TextureRegion region;
+    private TextureRegion region;
 
-    final float frameQuad;
+    private final float frameQuad;
 
-    Texture tex;
+    private Texture tex;
 
 
     public HealthBar(TextureRegion region, Texture tex)
@@ -34,6 +34,17 @@ public class HealthBar {
     {
         float ratio = (float) HP/MaxHP;
         Renderer.Instance().Draw(tex, new Vector4f(region.x() + (frameQuad * (int)(ratio * (region.frames()-1)) ), region.y(), frameQuad, region.h()), new Vector4f(position.x*2 , position.y*2, frameQuad*2, region.h()*2));
+    }
+
+
+    public void TakeDamage(int dmg)
+    {
+        HP -= dmg;
+    }
+
+    public int HealthPoints()
+    {
+        return HP;
     }
 
 }

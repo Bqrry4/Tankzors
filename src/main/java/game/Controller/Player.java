@@ -28,6 +28,11 @@ public class Player implements Entity {
     public void Process()
     {
         //Recieving input for desired later actions
+        if(InputHandler.keyState(GLFW_KEY_SPACE))
+        {
+            tank.WantToAtack();
+        }
+
         if(InputHandler.keyState(GLFW_KEY_UP))
         {
             tank.MoveBy(20, Direction.Up);
@@ -46,16 +51,10 @@ public class Player implements Entity {
             return;
         }
 
-
         if(InputHandler.keyState(GLFW_KEY_RIGHT))
         {
             tank.MoveBy(20, Direction.Right);
             return;
-        }
-
-        if(InputHandler.keyState(GLFW_KEY_SPACE))
-        {
-            tank.WantToAtack(true);
         }
     }
 

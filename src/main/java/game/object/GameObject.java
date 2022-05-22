@@ -1,4 +1,5 @@
 package game.object;
+import auxiliar.Direction;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 
@@ -8,9 +9,12 @@ public abstract class GameObject {
     //2 is Shell
     protected char ObjectType = 0;
 
+    protected boolean Existence = true;
 
     //Split in position and hitbox
     protected Vector4f hitbox;
+    protected Direction direction;
+
 
 
     public GameObject()
@@ -32,5 +36,21 @@ public abstract class GameObject {
     public char GetObjectType()
     {
         return ObjectType;
+    }
+
+    public Direction Direction()
+    {
+        return direction;
+    }
+
+
+    public boolean ShouldExist()
+    {
+        return Existence;
+    }
+
+    public void SetExistence(boolean value)
+    {
+        Existence = value;
     }
 }
