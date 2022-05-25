@@ -1,7 +1,7 @@
 package game.Controller;
 
 import auxiliar.Direction;
-import game.InputHandler;
+import Managers.InputHandler;
 import game.object.Entity.tank.Tank;
 import org.joml.Vector2f;
 

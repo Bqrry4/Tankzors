@@ -2,19 +2,20 @@ package game.menu;
 
 import Managers.Renderer;
 import Managers.ResourceManager;
-import game.InputHandler;
-import renderer.Font;
-import renderer.Shader;
+import exceptions.ExitFromMenuEvent;
 import renderer.Texture;
-import renderer.VAOStandart;
 
-import static org.lwjgl.glfw.GLFW.GLFW_KEY_LEFT;
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_2D;
-import static org.lwjgl.opengl.GL11.glBindTexture;
+//I fucking love dynamic programing // Kill me!
+
+//COMPOSITE IS NOT FOR A GRAPHIC MENU!!!!
+
+
+
 
 public class Menu {
     private boolean isActive; //Active or not
-    MenuComponent component;
+    MenuComponent root;
+    MenuComponent active;
 
     Texture tex; //Background
 
@@ -26,9 +27,17 @@ public class Menu {
 
     public void Process()
     {
-        Update();
+        Renderer.Instance().Draw(tex, null, null);
+        tex.Bind(0);
+        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
 
-        Render();
+        try {
+            active.show();
+        }
+        catch (ExitFromMenuEvent e)
+        {
+            isActive = false;
+        }
     }
 
     public boolean isTriggered()
@@ -39,28 +48,20 @@ public class Menu {
     {
         isActive = value;
     }
-
-    public void SetMenuAttribute(MenuComponent attribute)
+    public void ActivateTrigger()
     {
-        component = attribute;
+        isActive = true;
+        active = root;
+        active.IsRoot(true);
     }
 
-    private void Update()
+    public void SetMenuRootAttribute(MenuComponent attribute)
     {
-
+        root = attribute;
     }
-
-    private void Render()
+    public void OvverrideActiveAttribute(MenuComponent attribute)
     {
-        Renderer.Instance().Draw(tex, null, null);
-        tex.Bind(0);
-        Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
-
-
-        component.show();
-
-
+        active = attribute;
     }
-
 
 }

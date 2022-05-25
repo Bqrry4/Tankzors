@@ -1,40 +1,105 @@
 package game.menu;
 
+import Managers.InputHandler;
+import Managers.ResourceManager;
+import auxiliar.TextureRegion;
+import exceptions.ExitFromMenuEvent;
+import gui.Text;
+import org.joml.Vector4f;
+import renderer.Texture;
+
 import java.util.ArrayList;
 import java.util.List;
 
-public class subMenu implements MenuComponent {
-    String label;
+import static org.lwjgl.glfw.GLFW.*;
 
-    private final List<MenuComponent> buttons = new ArrayList<MenuComponent>();
+public class subMenu extends Button implements MenuComponent {
+
+    Menu face;
+    boolean InsideSubMenu = false;
+
+    private final List<MenuComponent> buttons = new ArrayList<>();
+    private int SelectedIndex = -1;
 
     public subMenu(String label)
     {
-        this.label = label;
+        super(label);
     }
 
-    public void Loop()
+    public subMenu(Menu face, Vector4f hitbox, Text label, Texture tex, TextureRegion region)
     {
-        for(MenuComponent component : buttons)
-        {
-            component.show();
-            component.DoIfSelected();
-        }
-    }
+        super(hitbox, label, tex, region);
 
-    @Override
-    public void show()
-    {
-        for(MenuComponent component : buttons)
-        {
-            component.show();
-        }
+        this.face = face;
     }
 
     @Override
-    public final void DoIfSelected()
+    public void IsRoot(boolean value)
     {
-        Loop(); //If selected, start the current subMenu Loop
+        InsideSubMenu = value;
+    }
+
+    public final void update() throws ExitFromMenuEvent
+    {
+        if(InputHandler.keyAction(GLFW_KEY_ENTER))
+        {
+            if(SelectedIndex >= 0 && SelectedIndex < buttons.size() )
+            {
+                buttons.get(SelectedIndex).functionality();
+                InsideSubMenu = false;
+            }
+        }
+        if(InputHandler.keyAction(GLFW_KEY_UP))
+        {
+            if(SelectedIndex >= 0 && SelectedIndex < buttons.size() )
+                buttons.get(SelectedIndex).Select(false);
+
+            --SelectedIndex;
+            if(SelectedIndex < 0)
+            {
+                SelectedIndex = buttons.size() - 1;
+            }
+
+            buttons.get(SelectedIndex).Select(true);
+        }
+        if(InputHandler.keyAction(GLFW_KEY_DOWN))
+        {
+            if(SelectedIndex >= 0 && SelectedIndex < buttons.size() )
+                buttons.get(SelectedIndex).Select(false);
+
+            ++SelectedIndex;
+            if(SelectedIndex >= buttons.size())
+            {
+                SelectedIndex = 0;
+            }
+            buttons.get(SelectedIndex).Select(true);
+        }
+
+    }
+
+    @Override
+    public void show() throws ExitFromMenuEvent
+    {
+        if(InsideSubMenu)
+        {
+            update();
+
+            for(MenuComponent component : buttons)
+            {
+                component.show();
+            }
+        }
+        else
+        {
+            super.show();
+        }
+    }
+
+
+    @Override
+    public void functionality() throws ExitFromMenuEvent {
+        face.OvverrideActiveAttribute(this);
+        InsideSubMenu = true;
     }
 
     public void add(MenuComponent component)
@@ -47,7 +112,7 @@ public class subMenu implements MenuComponent {
     }
 
     public MenuComponent getChild(int id){
-        return (MenuComponent) buttons.get(id);
+        return buttons.get(id);
     }
 
 }

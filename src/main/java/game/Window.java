@@ -54,6 +54,10 @@ public class Window {
         glfwDestroyWindow(window);
     }
 
+    public long getID()
+    {
+        return window;
+    }
 
     public void BindKeyCallBack(org.lwjgl.glfw.GLFWKeyCallbackI cbfun )
     {

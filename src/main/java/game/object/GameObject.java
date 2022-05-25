@@ -15,8 +15,6 @@ public abstract class GameObject {
     protected Vector4f hitbox;
     protected Direction direction;
 
-
-
     public GameObject()
     {}
 

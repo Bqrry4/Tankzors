@@ -8,7 +8,7 @@ import static org.lwjgl.opengl.GL15.*;
 
 public final class Texture {
 
-    static int instances = 0;
+    static int instances = 1;
     final int orderID;
 
     private int texId;

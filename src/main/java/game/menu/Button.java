@@ -2,37 +2,70 @@ package game.menu;
 
 import Managers.Renderer;
 import Managers.ResourceManager;
+import auxiliar.TextureRegion;
+import exceptions.ExitFromMenuEvent;
 import gui.Text;
 import org.joml.Vector4f;
+import renderer.Texture;
 
-public class Button implements MenuComponent {
+public abstract class Button implements MenuComponent {
 
-    Vector4f hitbox;
+    protected Vector4f hitbox;
 
-    Text label;
+    protected Text label;
+
+    //Selected texture block
+    protected TextureRegion region;
+    protected Texture tex;
+
+    protected boolean Selected = false;
 
     public Button(String label)
     {
         this.label = new Text(label, ResourceManager.Instance().GetFont("font"));
     }
-    public Button(Vector4f hitbox, Text label)
+    public Button(Vector4f hitbox, Text label, Texture tex, TextureRegion region)
     {
         this.label = label;
         this.hitbox = hitbox;
+
+        this.tex = tex;
+        this.region = region;
+
         label.TranslateTo(hitbox.x +  hitbox.z/2 - (float)label.TextBoxW()/2, hitbox.y);
     }
 
 
     @Override
-    public void show()
+    public void show() throws ExitFromMenuEvent
     {
-        label.render();
+        if(Selected)
+        {
+            label.render(new Vector4f(1f));
+        }
+        else
+        {
+            label.render();
+        }
         Renderer.Instance().Present(ResourceManager.Instance().GetShader("font"), 1);
+
+        if(Selected)
+        {
+            Renderer.Instance().Draw(tex , new Vector4f(region.x(), region.y(), region.w(), region.h()), hitbox);
+            Renderer.Instance().Present(ResourceManager.Instance().GetShader("default"), 0);
+        }
+
     }
 
+
     @Override
-    public void DoIfSelected()
-    {
-        //Nothing, override at instantiation
+    public void Select(boolean value) {
+        Selected = value;
     }
+
+
+    @Override
+    public void IsRoot(boolean value)
+    {}
+
 }

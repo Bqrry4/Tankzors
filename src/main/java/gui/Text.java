@@ -39,6 +39,19 @@ public class Text {
         setText(this.text);
     }
 
+    public Text(String text, Font font, Vector4f Color)
+    {
+        this.text = text;
+        this.font = font;
+        this.Color = Color;
+
+        //6 vertices per quad with two floats
+        position = MemoryUtil.memAllocFloat(12 * this.text.length());
+        uvs = MemoryUtil.memAllocFloat(12 * this.text.length());
+
+        setText(this.text);
+    }
+
     public Text(String text, Font font, Vector2f size, Vector2f pos)
     {
         this.text = text;
@@ -147,6 +160,11 @@ public class Text {
     }
 
     public void render()
+    {
+        render(Color);
+    }
+
+    public void render(Vector4f Color)
     {
         font.Bind(0);
 //        Renderer.Instance().addBufferInfo(vertex, 6 * text.length());

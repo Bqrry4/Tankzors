@@ -19,11 +19,11 @@ public class Shell extends GameObject implements Munition {
 
     int dmg = 3;
 
-    TextureRegion region;
     Vector4f shape = null;
 
     float Speed = 50;
 
+    TextureRegion region;
     Texture tex;
 
     public Shell(ObjectMediator mediator, Direction direction, Vector4f hitbox, TextureRegion region, Texture tex, int fractionID)

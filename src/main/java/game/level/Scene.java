@@ -109,6 +109,7 @@ public class Scene implements IScene {
     @Override
     public void addObject(GameObject obj)
     {
+        if(obj == null) return;
         objectList.add(obj);
     }
 

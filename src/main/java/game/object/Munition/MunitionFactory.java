@@ -64,9 +64,16 @@ public class MunitionFactory {
         return null;
     }
 
-    static public GameObject SpawnExplosion()
+    static public GameObject SpawnExplosion(int type, Vector2f position)
     {
+        GameObject explosion = null;
+        switch (type)
+        {
+            case 0:
+//                explosion = new Explosion();
+                break;
 
+        }
 
 
         return null;
