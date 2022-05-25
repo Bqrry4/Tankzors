@@ -35,6 +35,9 @@ public class InteractionLayer implements ObjectMediator {
         int r = (int) (position.x/tileW);
         int c = (int) (position.y/tileH);
 
+        if(r >= Map[0].length || r < 0 || c < 0 ||  c >= Map.length)
+            return false;
+
         if(Map[c][r] == null)
         {
             Map[c][r] = obj;

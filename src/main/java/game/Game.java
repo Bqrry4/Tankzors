@@ -200,6 +200,8 @@ public class Game {
         menu.SetMenuRootAttribute(MainMenu);
 //        menu.setTrigger(true);
         menu.ActivateTrigger();
+
+
         //Game Loop
         while(!MainWindow.ShouldClose())
         {
@@ -208,11 +210,11 @@ public class Game {
             WindowTimer.Instance().Ticks();
 
 
-            if(menu.isTriggered())
-            {
-                menu.Process();
-            }
-            else
+//            if(menu.isTriggered())
+//            {
+//                menu.Process();
+//            }
+//            else
             {
                 if(!LevelLoader.LevelLoaded)
                     LevelLoader.Load(level);
