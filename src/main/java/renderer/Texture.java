@@ -8,6 +8,7 @@ import static org.lwjgl.opengl.GL15.*;
 
 public final class Texture {
 
+    //Only because the font is binded to 0  implicitly
     static int instances = 1;
     final int orderID;
 

@@ -27,6 +27,8 @@ public class NPC implements Entity {
     @Override
     public void Process()
     {
+        path = entityMediator.LeadMe(this);
+
         if (path != null && !path.isEmpty()) {
 
             if (tank.Idle()) {
@@ -44,10 +46,14 @@ public class NPC implements Entity {
                     tank.MoveBy(20, Direction.Down);
 
                 //Default case current = got
-                else
-                {
+                else {
                     path.remove(0);
                 }
+            }
+            if(tank.IntentToAtack())
+            {
+                tank.WantToAtack();
+                tank.AtackIntention(false);
             }
         }
         else
@@ -71,7 +77,7 @@ public class NPC implements Entity {
 
     @Override
     public boolean OutOfScope() {
-        return false;
+        return !tank.ShouldExist();
     }
 
     //when need path

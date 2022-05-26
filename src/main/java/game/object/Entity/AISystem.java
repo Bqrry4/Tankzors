@@ -4,6 +4,7 @@ import auxiliar.PathFinding.PathFinder;
 import game.Controller.Entity;
 import game.Controller.EntityMediator;
 import auxiliar.PathFinding.AStar;
+import game.level.LevelLoader;
 import org.joml.Vector2f;
 import org.joml.Vector2i;
 
@@ -19,33 +20,10 @@ public class AISystem implements EntityMediator {
 
     //Add aswell goals, for enemy Unities
 
-    public AISystem()
+    public AISystem(int[][] physical)
     {
-        int[][] map2 = {
-                {217,217,218,217,217,218,217,218,218,217,218,218,218,217,218,217},
-                {218,0,0,0,0,0,0,0,0,218,217,217,217,218,217,217},
-                {217,0,0,0,0,0,0,0,0,0,0,0,0,0,218,218},
-                {217,0,0,0,0,0,0,0,0,0,0,0,0,0,217,217},
-                {217,0,0,0,0,0,0,0,0,0,0,0,0,0,217,218},
-                {0,0,0,0,0,0,0,0,0,0,0,0,0,0,217,217},
-                {217,0,0,0,0,0,0,0,0,0,0,0,0,224,217,217},
-                {225,224,225,225,225,226,226,0,0,0,0,0,225,226,225,225},
-                {0,0,0,0,0,0,0,0,0,0,0,0,225,232,234,217},
-                {0,0,0,0,0,0,0,0,0,0,0,225,226,0,0,218},
-                {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,217},
-                {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,217},
-                {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,218},
-                {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,218},
-                {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,218},
-                {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,218},
-                {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,217},
-                {218,217,217,218,217,217,217,0,0,0,0,0,0,0,0,218},
-                {218,0,0,0,0,0,217,0,0,0,0,0,0,0,0,217},
-                {218,0,0,0,0,0,217,0,0,0,0,0,218,218,218,217},
-                {218,0,0,0,0,0,217,0,0,0,0,0,0,0,0,217},
-                {218,217,217,217,217,217,218,218,218,217,218,217,217,218,218,217}
-        };
-        pf = new AStar(map2, new Vector2i(20));
+
+        pf = new AStar(physical, new Vector2i(20));
     }
 
 
@@ -117,7 +95,13 @@ public class AISystem implements EntityMediator {
         {
             Entity entity = iterator.next();
             if(entity.OutOfScope())
+            {
                 iterator.remove();
+
+                //Only for hardcoded resons
+                //Deadline hurts
+                LevelLoader.Score += 50;
+            }
 
             entity.Process();
         }

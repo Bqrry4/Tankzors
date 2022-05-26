@@ -1,6 +1,7 @@
 package game.level.layer;
 
 import Managers.Renderer;
+import Managers.Settings;
 import org.joml.Vector4f;
 import renderer.Texture;
 
@@ -30,7 +31,7 @@ public class TileLayer extends Layer {
                 
                 int column = TileIdMap[id][jd] % 27 - 1;
                 int row = TileIdMap[id][jd] / 27;
-                Renderer.Instance().Draw(tex, new Vector4f(new float[]{tileW * column, tileH * row, tileW, tileH}), new Vector4f(new float[]{jd * tileW * 2, id * tileH * 2, tileW * 2, tileH * 2 }));
+                Renderer.Instance().Draw(tex, new Vector4f(new float[]{tileW * column, tileH * row, tileW, tileH}), new Vector4f(new float[]{jd * tileW* Settings.ScaleRatio(), id * tileH* Settings.ScaleRatio(), tileW* Settings.ScaleRatio(), tileH* Settings.ScaleRatio()}));
             }
         }
 

@@ -36,7 +36,7 @@ public class MunitionFactory {
                 pos.w = 6;
             }
 
-            munition = new Shell(Scene.getMediator(), direction, pos, textureMap.getRegion(0), textureMap.getTexture(), Fraction);
+            munition = new Shell(Scene.getMediator(), direction, pos, textureMap.getRegion(0), textureMap.getTexture(),0, Fraction, 1);
         }
 
         if(type.equals("plasma")) {
@@ -47,7 +47,7 @@ public class MunitionFactory {
                 pos.w = 6;
             }
 
-            munition = new Shell(Scene.getMediator(), direction, pos, textureMap.getRegion(1), textureMap.getTexture(), Fraction);
+            munition = new Shell(Scene.getMediator(), direction, pos, textureMap.getRegion(1), textureMap.getTexture(),1, Fraction, 2);
         }
 
         if(type.equals("armored")) {
@@ -57,7 +57,7 @@ public class MunitionFactory {
                 pos.z = 12;
                 pos.w = 6;
             }
-            munition = new Shell(Scene.getMediator(), direction, pos, textureMap.getRegion(3), textureMap.getTexture(), Fraction);
+            munition = new Shell(Scene.getMediator(), direction, pos, textureMap.getRegion(3), textureMap.getTexture(),0, Fraction, 3);
         }
         Scene.addObject(munition);
 
@@ -70,11 +70,16 @@ public class MunitionFactory {
         switch (type)
         {
             case 0:
-//                explosion = new Explosion();
+                explosion = new Explosion(position, textureMap.getRegion(7), textureMap.getTexture());
                 break;
-
+            case 1:
+                explosion = new Explosion(position, textureMap.getRegion(8), textureMap.getTexture());
+                break;
+            case 2:
+                explosion = new Explosion(position, textureMap.getRegion(9), textureMap.getTexture());
+                break;
         }
-
+        Scene.addToBuffer(explosion);
 
         return null;
     }

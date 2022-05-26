@@ -21,6 +21,8 @@ public class InputHandler //
         keyActionMap[3] = (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_RELEASE && keyStateMap[3]);
         keyActionMap[4] = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_RELEASE && keyStateMap[4]);
         keyActionMap[5] = (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_RELEASE && keyStateMap[5]);
+        keyActionMap[6] = (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_RELEASE && keyStateMap[6]);
+
 
         keyStateMap[0] = (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS);
         keyStateMap[1] = (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS);
@@ -28,6 +30,8 @@ public class InputHandler //
         keyStateMap[3] = (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS);
         keyStateMap[4] = (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS);
         keyStateMap[5] = (glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS);
+        keyStateMap[6] = (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS);
+
     }
 
 
@@ -69,6 +73,8 @@ public class InputHandler //
                 return keyStateMap[4];
             case GLFW_KEY_ENTER:
                 return keyStateMap[5];
+            case GLFW_KEY_ESCAPE:
+                return keyStateMap[6];
         }
         return false;
     }
@@ -89,6 +95,8 @@ public class InputHandler //
                 return keyActionMap[4];
             case GLFW_KEY_ENTER:
                 return keyActionMap[5];
+            case GLFW_KEY_ESCAPE:
+                return keyActionMap[6];
         }
         return false;
     }

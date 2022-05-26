@@ -1,6 +1,8 @@
 package Managers;
 
 import game.level.LevelLoader;
+import game.level.Scene;
+
 import java.sql.*;
 
 public class DataManager {
@@ -23,6 +25,7 @@ public class DataManager {
             select.next();
             LevelLoader.LevelID = select.getInt(1);
             LevelLoader.Score = select.getInt(2);
+            LevelLoader.OldScore = LevelLoader.Score;
 
             select.close();
             s.close();
@@ -43,9 +46,9 @@ public class DataManager {
             c.setAutoCommit(false);
             s = c.createStatement();
 
-            s.execute("DELETE FROM LevelProgess");
+            s.execute("DELETE FROM LevelProgress");
 
-            s.execute("INSERT INTO LevelProgess " +
+            s.execute("INSERT INTO LevelProgress " +
                     "VALUES ('" + LevelLoader.LevelID + "', '" + LevelLoader.Score + "');");
 
             s.close();

@@ -2,6 +2,7 @@ package game.Controller;
 
 import auxiliar.Direction;
 import Managers.InputHandler;
+import game.level.Level;
 import game.object.Entity.tank.Tank;
 import org.joml.Vector2f;
 
@@ -70,7 +71,9 @@ public class Player implements Entity {
 
     @Override
     public boolean OutOfScope() {
-        return false;
+        if(!tank.ShouldExist())
+            Level.GameOver = true;
+        return !tank.ShouldExist();
     }
 
 

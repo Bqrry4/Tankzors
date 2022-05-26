@@ -20,6 +20,9 @@ public abstract class Button implements MenuComponent {
 
     protected boolean Selected = false;
 
+    public Button()
+    {}
+
     public Button(String label)
     {
         this.label = new Text(label, ResourceManager.Instance().GetFont("font"));
@@ -32,7 +35,8 @@ public abstract class Button implements MenuComponent {
         this.tex = tex;
         this.region = region;
 
-        label.TranslateTo(hitbox.x +  hitbox.z/2 - (float)label.TextBoxW()/2, hitbox.y);
+        //TODO rework text dimension calculation for centring
+        label.TranslateTo(hitbox.x +  hitbox.z/2 - (float)label.TextBoxW()/3, hitbox.y + label.TextBoxH());
     }
 
 

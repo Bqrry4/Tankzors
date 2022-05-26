@@ -1,16 +1,16 @@
 package gui;
 
+import Managers.DataManager;
 import Managers.Renderer;
 import Managers.Settings;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.system.MemoryStack;
-import org.lwjgl.system.MemoryUtil;
 import renderer.Font;
 
-import java.nio.Buffer;
-import java.nio.ByteBuffer;
+import org.lwjgl.BufferUtils;
+
 import java.nio.FloatBuffer;
 
 import static org.lwjgl.system.MemoryStack.stackPush;
@@ -23,7 +23,7 @@ public class Text {
     private Font font;
 
     //Whhite color on default
-    private Vector4f Color = new Vector4f(1f);
+    private Vector4f Color;
     private FloatBuffer position;
     private FloatBuffer uvs;
 
@@ -31,10 +31,15 @@ public class Text {
     {
         this.text = text;
         this.font = font;
+        Color = new Vector4f(1f);
 
         //6 vertices per quad with two floats
-        position = MemoryUtil.memAllocFloat(12 * this.text.length());
-        uvs = MemoryUtil.memAllocFloat(12 * this.text.length());
+
+        position = BufferUtils.createFloatBuffer(12 * this.text.length());
+        uvs = BufferUtils.createFloatBuffer(12 * this.text.length());
+
+//        position = MemoryUtil.memAllocFloat(12 * this.text.length());
+//        uvs = MemoryUtil.memAllocFloat(12 * this.text.length());
 
         setText(this.text);
     }
@@ -46,8 +51,8 @@ public class Text {
         this.Color = Color;
 
         //6 vertices per quad with two floats
-        position = MemoryUtil.memAllocFloat(12 * this.text.length());
-        uvs = MemoryUtil.memAllocFloat(12 * this.text.length());
+        position = BufferUtils.createFloatBuffer(12 * this.text.length());
+        uvs = BufferUtils.createFloatBuffer(12 * this.text.length());
 
         setText(this.text);
     }
@@ -57,8 +62,8 @@ public class Text {
         this.text = text;
         this.font = font;
 
-        position = MemoryUtil.memAllocFloat(12 * this.text.length());
-        uvs = MemoryUtil.memAllocFloat(12 * this.text.length());
+        position = BufferUtils.createFloatBuffer(12 * this.text.length());
+        uvs = BufferUtils.createFloatBuffer(12 * this.text.length());
 
         setText(this.text);
         ScaleAt(size.x, size.y);
@@ -68,25 +73,40 @@ public class Text {
 
     public void setText(String text)
     {
+
+        //TODO Reseting the TEXT value
+
         //If new text length is different from previous, realloc the buffers
         if(this.text.length() != text.length())
         {
-            MemoryUtil.memFree(position);
-            MemoryUtil.memFree(uvs);
-
-            position = MemoryUtil.memAllocFloat(6 * 2 * this.text.length());
-            uvs = MemoryUtil.memAllocFloat(6 * 2 * this.text.length());
+//            MemoryUtil.memFree(position);
+//            MemoryUtil.memFree(uvs);
+//
+//            position = MemoryUtil.memAllocFloat(6 * 2 * this.text.length());
+//            uvs = MemoryUtil.memAllocFloat(6 * 2 * this.text.length());
+            position = BufferUtils.createFloatBuffer(12 * this.text.length());
+            uvs = BufferUtils.createFloatBuffer(12 * this.text.length());
         }
+
+        this.text = text;
+
 
         //Using a quad to extract char rectangle from bitmap
         STBTTAlignedQuad quad = STBTTAlignedQuad.create();
+
 
         try (MemoryStack stack = stackPush()) {
             FloatBuffer x = stack.callocFloat(1);
             FloatBuffer y = stack.callocFloat(1);
 
+
+            h = 0;
             for (int i = 0; i < text.length(); ++i) {
                 font.GetChar(quad, text.charAt(i), x, y);
+
+
+                if(h < (-1 * quad.y0()))
+                    h = (int) (-1 * quad.y0());
 
                 //Default position is on center-right of the screen
                 position.put(quad.x0() / Settings.getWidth()).put(-1 * quad.y1() / Settings.getHeigth());
@@ -107,14 +127,17 @@ public class Text {
 
             }
              w = (int)x.get(0);
-            h = (int)y.get(0);
+//            h = (int)y.get(0);
         }
+
 
         position.clear();
         uvs.clear();
 
         //Free the quad
-        quad.free();
+
+        //Note: GC may try to dealloc, that will result a SEgFault
+//        quad.free();
     }
 
     public void setColor(float r, float g, float b, float a)
@@ -144,7 +167,7 @@ public class Text {
         for(int i = 0; i < position.limit(); i +=2)
         {
             position.put(i,position.get(i) * x).put(i+1, position.get(i+1) * y);
-            System.out.println(position.get(i) * x);
+//            System.out.println(position.get(i) * x);
         }
     }
 
@@ -152,12 +175,16 @@ public class Text {
     {
         return w;
     }
-
-    public void Clear()
+    public int TextBoxH()
     {
-        MemoryUtil.memFree(position);
-        MemoryUtil.memFree(uvs);
+        return h;
     }
+
+//    public void Clear()
+//    {
+//        MemoryUtil.memFree(position);
+//        MemoryUtil.memFree(uvs);
+//    }
 
     public void render()
     {
@@ -169,6 +196,11 @@ public class Text {
         font.Bind(0);
 //        Renderer.Instance().addBufferInfo(vertex, 6 * text.length());
         Renderer.Instance().ShapeByBuffer(position, uvs, Color, 6 * text.length());
+    }
+
+    public String getAsociatedString()
+    {
+        return text;
     }
 
 }

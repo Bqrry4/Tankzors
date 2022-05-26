@@ -7,6 +7,7 @@ import game.object.ObjectMediator;
 public interface IScene {
 
     void addObject(GameObject obj);
+    void addToBuffer(GameObject obj);
     void addLayer(Layer lay);
 
     ObjectMediator getMediator();

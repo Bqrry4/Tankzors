@@ -1,7 +1,9 @@
 package game.menu;
 
 import Managers.InputHandler;
+import Managers.Renderer;
 import Managers.ResourceManager;
+import Managers.Settings;
 import auxiliar.TextureRegion;
 import exceptions.ExitFromMenuEvent;
 import gui.Text;
@@ -20,6 +22,9 @@ public class subMenu extends Button implements MenuComponent {
 
     private final List<MenuComponent> buttons = new ArrayList<>();
     private int SelectedIndex = -1;
+
+    public subMenu()
+    {}
 
     public subMenu(String label)
     {
@@ -43,6 +48,7 @@ public class subMenu extends Button implements MenuComponent {
     {
         if(InputHandler.keyAction(GLFW_KEY_ENTER))
         {
+            System.out.println("TYYYY");
             if(SelectedIndex >= 0 && SelectedIndex < buttons.size() )
             {
                 buttons.get(SelectedIndex).functionality();
@@ -83,6 +89,9 @@ public class subMenu extends Button implements MenuComponent {
         if(InsideSubMenu)
         {
             update();
+            label.TranslateTo((float) Settings.getWidth() / 2 - (float)label.TextBoxW()/3, 100 + label.TextBoxH());
+            label.render();
+            Renderer.Instance().Present(ResourceManager.Instance().GetShader("font"), 1);
 
             for(MenuComponent component : buttons)
             {
@@ -91,6 +100,7 @@ public class subMenu extends Button implements MenuComponent {
         }
         else
         {
+            label.TranslateTo(hitbox.x +  hitbox.z/2 - (float)label.TextBoxW()/3, hitbox.y + label.TextBoxH());
             super.show();
         }
     }

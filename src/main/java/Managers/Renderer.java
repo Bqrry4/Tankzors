@@ -4,6 +4,7 @@ import auxiliar.Direction;
 import auxiliar.TextureRegion;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.system.MemoryUtil;
 import renderer.Shader;
 import renderer.Texture;
@@ -50,7 +51,8 @@ public class Renderer
         vbo = glGenBuffers();
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
-        vertices = MemoryUtil.memAlloc(bufferSize);
+        vertices = BufferUtils.createByteBuffer(bufferSize);
+//        vertices = MemoryUtil.memAlloc(bufferSize);
         long size = (long) vertices.capacity() * Float.BYTES;
         glBufferData(GL_ARRAY_BUFFER, size, GL_DYNAMIC_DRAW);
 
@@ -76,8 +78,8 @@ public class Renderer
     public void Clear()
     {
         glUnmapBuffer(GL_ARRAY_BUFFER);
-        vertices.clear();
-        MemoryUtil.memFree(vertices);
+/*        vertices.clear();
+        MemoryUtil.memFree(vertices);*/
     }
 
 
@@ -130,6 +132,11 @@ public class Renderer
     //Rotation, Up(by 0 degree), Left(+90d), Right(-90d), Down(fliping)
     public void Draw(Texture texture, Vector4f srcRect, Vector4f destRect, Direction rotation)
     {
+        if(numVertices * 4 > 4096)
+        {
+            Present(ResourceManager.Instance().GetShader("default"), 0);
+        }
+
         //Transforming SDL-like coordinates in normalized one
 
         //If srcRect is null it takes the entire texture

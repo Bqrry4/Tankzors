@@ -1,11 +1,13 @@
 package game.object.Entity.tank;
 
 import Managers.Renderer;
+import Managers.Settings;
 import auxiliar.Direction;
 import auxiliar.TextureRegion;
 import game.WindowTimer;
 import game.level.Scene;
 import game.object.GameObject;
+import game.object.Munition.Munition;
 import game.object.Munition.MunitionFactory;
 import game.object.ObjectMediator;
 import org.joml.Vector2f;
@@ -46,7 +48,12 @@ public class Tank extends GameObject {
     private double TresHold = 0.6f;
     private double CountDown = TresHold;
 
-    public Tank(ObjectMediator mediator, Texture tex, TextureRegion RegionID, int x, int y, int w, int h, Direction direction, int fractionID, HealthBar hb, Field field)
+    boolean AtIntention = false;
+
+    //
+    private String shellType;
+
+    public Tank(ObjectMediator mediator, Texture tex, TextureRegion RegionID, int x, int y, int w, int h, Direction direction, int fractionID, HealthBar hb, Field field, String shellType)
     {
         this.mediator = mediator;
 
@@ -66,6 +73,7 @@ public class Tank extends GameObject {
         this.fractionID = fractionID;
         this.hb = hb;
         this.fb = field;
+        this.shellType = shellType;
 
         //Notifing mediator about current position
         mediator.notifyDesired(this, new Vector2f(hitbox.x + hitbox.z/2, hitbox.y + hitbox.w/2));
@@ -76,12 +84,13 @@ public class Tank extends GameObject {
     {
         CountDowns();
         Movement();
+        fb.update();
     }
 
     @Override
     public void render() {
         fb.render(hitbox);
-        Renderer.Instance().Draw(tex ,new Vector4f(region.x() + (frameQuad * (int)frame), region.y(), frameQuad, region.h()), new Vector4f(hitbox.x*2 , hitbox.y*2, frameQuad*2, region.h()*2));
+        Renderer.Instance().Draw(tex ,new Vector4f(region.x() + (frameQuad * (int)frame), region.y(), frameQuad, region.h()), new Vector4f(hitbox.x* Settings.ScaleRatio(), hitbox.y* Settings.ScaleRatio(), frameQuad* Settings.ScaleRatio(), region.h()* Settings.ScaleRatio()));
         hb.render(new Vector2f(hitbox.x, hitbox.y - 1));
     }
 
@@ -227,7 +236,7 @@ public class Tank extends GameObject {
     {
         if(!rotatingFlag && CanAtack)
         {
-            MunitionFactory.SpawnShell("armored", direction, new Vector2f(hitbox.x, hitbox.y), fractionID);
+            MunitionFactory.SpawnShell(shellType, direction, new Vector2f(hitbox.x, hitbox.y), fractionID);
             CanAtack = false;
             //Reset countdown
             CountDown = 0f;
@@ -245,6 +254,16 @@ public class Tank extends GameObject {
         return CanAtack;
     }
 
+    public void AtackIntention(boolean value)
+    {
+        AtIntention = value;
+    }
+
+    public boolean IntentToAtack()
+    {
+        return AtIntention;
+    }
+
     public void RecieveDamage(int dmg)
     {
         if(fb.getSP() > 0)
@@ -257,6 +276,7 @@ public class Tank extends GameObject {
             if(hb.HealthPoints() <= 0)
             {
                 Existence = false;
+                MunitionFactory.SpawnExplosion(2, new Vector2f(hitbox.x + hitbox.z/2, hitbox.y + hitbox.w/2));
             }
         }
     }

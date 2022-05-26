@@ -1,6 +1,7 @@
 package game.object.Munition;
 
 import Managers.Renderer;
+import Managers.Settings;
 import auxiliar.Direction;
 import auxiliar.TextureRegion;
 import game.WindowTimer;
@@ -17,16 +18,16 @@ public class Shell extends GameObject implements Munition {
     int type = 0;
     int fractionID;
 
-    int dmg = 3;
+    int dmg = 0;
 
     Vector4f shape = null;
 
-    float Speed = 50;
+    float Speed = 70;
 
     TextureRegion region;
     Texture tex;
 
-    public Shell(ObjectMediator mediator, Direction direction, Vector4f hitbox, TextureRegion region, Texture tex, int fractionID)
+    public Shell(ObjectMediator mediator, Direction direction, Vector4f hitbox, TextureRegion region, Texture tex, int type, int fractionID, int dmg)
     {
         this.mediator = mediator;
 
@@ -41,6 +42,8 @@ public class Shell extends GameObject implements Munition {
         this.direction = direction;
 
         this.fractionID = fractionID;
+        this.dmg = dmg;
+        this.type = type;
 
         //Notifing mediator about current position
         mediator.notifyCurrent(this);
@@ -76,7 +79,7 @@ public class Shell extends GameObject implements Munition {
     @Override
     public void render() {
 
-        Renderer.Instance().Draw(tex, new Vector4f(region.x(), region.y(), region.w(), region.h()), new Vector4f(hitbox.x *2, hitbox.y *2, region.w()*2, region.h()*2), direction);
+        Renderer.Instance().Draw(tex, new Vector4f(region.x(), region.y(), region.w(), region.h()), new Vector4f(hitbox.x* Settings.ScaleRatio(), hitbox.y* Settings.ScaleRatio(), region.w()* Settings.ScaleRatio(), region.h()* Settings.ScaleRatio()), direction);
     }
 
     public int getFractionID()
@@ -87,5 +90,12 @@ public class Shell extends GameObject implements Munition {
     public int DoDamage()
     {
         return dmg;
+    }
+
+    @Override
+    public void Destroy()
+    {
+        super.Destroy();
+        MunitionFactory.SpawnExplosion(type, new Vector2f(hitbox.x + hitbox.z/2, hitbox.y + hitbox.w/2));
     }
 }

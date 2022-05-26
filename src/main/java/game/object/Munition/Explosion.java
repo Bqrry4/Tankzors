@@ -1,6 +1,7 @@
 package game.object.Munition;
 
 import Managers.Renderer;
+import Managers.Settings;
 import auxiliar.TextureRegion;
 import game.WindowTimer;
 import game.object.GameObject;
@@ -13,7 +14,7 @@ public class Explosion extends GameObject {
     TextureRegion region;
     Texture tex;
 
-    int ASpeed = 50;
+    int ASpeed = 20;
 
     float frame = 0;
     float frameQuad;
@@ -41,6 +42,7 @@ public class Explosion extends GameObject {
 
     @Override
     public void render() {
-        Renderer.Instance().Draw(tex ,new Vector4f(region.x() + (frameQuad * (int)frame), region.y(), frameQuad, region.h()), new Vector4f(hitbox.x*2 , hitbox.y*2, frameQuad*2, region.h()*2));
+
+        Renderer.Instance().Draw(tex ,new Vector4f(region.x() + (frameQuad * (int)frame), region.y(), frameQuad, region.h()), new Vector4f((hitbox.x + hitbox.z/2 - frameQuad/2)* Settings.ScaleRatio(), (hitbox.y + hitbox.w/2 - (float) region.h()/2)* Settings.ScaleRatio(), frameQuad* Settings.ScaleRatio(), region.h()* Settings.ScaleRatio()));
     }
 }

@@ -3,6 +3,7 @@ package game;
 import Managers.*;
 import auxiliar.TextureRegion;
 import exceptions.ExitFromMenuEvent;
+import exceptions.NotImplementedLevel;
 import game.level.Level;
 import game.level.LevelLoader;
 import game.menu.Button;
@@ -21,6 +22,9 @@ import static org.lwjgl.opengl.GL30.*;
 
 
 public class Game {
+
+    public static boolean InGame = true;
+
     private final Window MainWindow;
 
     Level level;
@@ -121,9 +125,9 @@ public class Game {
 
                 new TextureRegion(0, 24, 96, 24, 4),
 
-                new TextureRegion(0, 150, 288, 4, 12),
-                new TextureRegion(0, 154, 288, 4, 12),
-                new TextureRegion(0, 158, 288, 4, 12),
+                new TextureRegion(0, 48, 255, 15, 17),
+                new TextureRegion(0, 63, 195, 15, 13),
+                new TextureRegion(0, 78, 980, 35, 28),
         };
         textureMapB.setIndices(IndicesB);
 
@@ -142,45 +146,70 @@ public class Game {
 
 
 
-        MenuComponent ContinueGame = new Button(new Vector4f((float) Settings.getWidth() / 2 - 70, 50, 250, 40), new Text("Continue", ResourceManager.Instance().GetFont("font"), new Vector4f(0.8f, 0.1f, 0f,1f)), ResourceManager.Instance().GetTexture("gui") ,region)
+        MenuComponent ContinueGame = new Button(new Vector4f((float) Settings.getWidth() / 2 - 125, 320, 250, 40), new Text("Continue", ResourceManager.Instance().GetFont("font"), new Vector4f(0.8f, 0.1f, 0f,1f)), ResourceManager.Instance().GetTexture("gui") ,region)
         {
             @Override
             public void functionality() throws ExitFromMenuEvent {
+
+                try {
+                    if(!LevelLoader.LevelLoaded)
+                        LevelLoader.Load(level);
+                }
+                catch (NotImplementedLevel e)
+                {
+                    System.out.println("Invalid level ID");
+                    InGame = false;
+                }
+
+
                 throw new ExitFromMenuEvent();
             }
         };
 
 
 
-        MenuComponent NewGame = new Button(new Vector4f((float) Settings.getWidth() / 2 - 70, 150, 250, 40), new Text("NewGame", ResourceManager.Instance().GetFont("font"), new Vector4f(0.8f, 0.1f, 0f,1f)), ResourceManager.Instance().GetTexture("gui") ,region )
+        MenuComponent NewGame = new Button(new Vector4f((float) Settings.getWidth() / 2 - 125, 395, 250, 40), new Text("NewGame", ResourceManager.Instance().GetFont("font"), new Vector4f(0.8f, 0.1f, 0f,1f)), ResourceManager.Instance().GetTexture("gui") ,region )
         {
             @Override
             public void functionality() throws ExitFromMenuEvent {
                 LevelLoader.LevelID = 0;
                 LevelLoader.Score = 0;
+
+                try {
+                    if(!LevelLoader.LevelLoaded)
+                        LevelLoader.Load(level);
+                }
+                catch (NotImplementedLevel e)
+                {
+                    InGame = false;
+                    System.out.println("Invalid level ID");
+                }
+
                 throw new ExitFromMenuEvent();
             }
         };
 
-        subMenu Options = new subMenu(menu, new Vector4f((float) Settings.getWidth() / 2 - 70, 250, 250, 40), new Text("Options", ResourceManager.Instance().GetFont("font"), new Vector4f(0.8f, 0.1f, 0f,1f)), ResourceManager.Instance().GetTexture("gui") ,region);
-        MenuComponent Scores = new Button(new Vector4f((float) Settings.getWidth() / 2 - 70, 350, 250, 40), new Text("Scores", ResourceManager.Instance().GetFont("font"), new Vector4f(0.8f, 0.1f, 0f,1f)), ResourceManager.Instance().GetTexture("gui") ,region)
+        subMenu Options = new subMenu(menu, new Vector4f((float) Settings.getWidth() / 2 - 125, 470, 250, 40), new Text("Options", ResourceManager.Instance().GetFont("font"), new Vector4f(0.8f, 0.1f, 0f,1f)), ResourceManager.Instance().GetTexture("gui") ,region);
+
+//        MenuComponent Scores = new Button(new Vector4f((float) Settings.getWidth() / 2 - 70, 470, 250, 40), new Text("Scores", ResourceManager.Instance().GetFont("font"), new Vector4f(0.8f, 0.1f, 0f,1f)), ResourceManager.Instance().GetTexture("gui") ,region)
+//        {
+//            @Override
+//            public void functionality() throws ExitFromMenuEvent
+//            {
+//
+//            }
+//        };
+        MenuComponent Exit = new Button(new Vector4f((float) Settings.getWidth() / 2 - 125, 545, 250, 40), new Text("Exit", ResourceManager.Instance().GetFont("font"), new Vector4f(0.8f, 0.1f, 0f,1f)), ResourceManager.Instance().GetTexture("gui") ,region)
         {
             @Override
             public void functionality() throws ExitFromMenuEvent
             {
-
-            }
-        };
-        MenuComponent Exit = new Button(new Vector4f((float) Settings.getWidth() / 2 - 70, 450, 250, 40), new Text("Exit", ResourceManager.Instance().GetFont("font"), new Vector4f(0.8f, 0.1f, 0f,1f)), ResourceManager.Instance().GetTexture("gui") ,region)
-        {
-            @Override
-            public void functionality() throws ExitFromMenuEvent
-            {
-
+                InGame = false;
+                throw new ExitFromMenuEvent();
             }
         };
 
-        MenuComponent Scale = new Button(new Vector4f((float) Settings.getWidth() / 2 - 70, 150, 250, 40), new Text("Scale", ResourceManager.Instance().GetFont("font")), ResourceManager.Instance().GetTexture("gui") ,region)
+        MenuComponent Scale = new Button(new Vector4f((float) Settings.getWidth() / 2 - 125, 150, 250, 40), new Text("Scale", ResourceManager.Instance().GetFont("font")), ResourceManager.Instance().GetTexture("gui") ,region)
         {
             @Override
             public void functionality() throws ExitFromMenuEvent
@@ -194,7 +223,7 @@ public class Game {
         MainMenu.add(ContinueGame);
         MainMenu.add(NewGame);
         MainMenu.add(Options);
-        MainMenu.add(Scores);
+//        MainMenu.add(Scores);
         MainMenu.add(Exit);
 
         menu.SetMenuRootAttribute(MainMenu);
@@ -203,35 +232,40 @@ public class Game {
 
 
         //Game Loop
-        while(!MainWindow.ShouldClose())
+        while(!MainWindow.ShouldClose() && InGame)
         {
             MainWindow.ProcessEvents();
             InputHandler.Update(MainWindow.getID());
             WindowTimer.Instance().Ticks();
 
 
-//            if(menu.isTriggered())
-//            {
-//                menu.Process();
-//            }
-//            else
+            if(menu.isTriggered())
             {
-                if(!LevelLoader.LevelLoaded)
-                    LevelLoader.Load(level);
+                menu.Process();
+            }
+            else
+            {
+                try {
+                    if(!LevelLoader.LevelLoaded)
+                        LevelLoader.Load(level);
+                }
+                catch (NotImplementedLevel e)
+                {
+                    InGame = false;
+                    System.out.println("Invalid level ID");
+                }
                 level.process();
             }
+
 
             MainWindow.SwapRenderBuffers();
         }
 
         MainWindow.Destroy();
         Window.CloseProperties();
-
         ResourceManager.Instance().Free();
-
         Renderer.Instance().Clear();
-
-        //WriteBack to DataBase
+//        //WriteBack to DataBase
         DataManager.Write("assets/db/info.db");
     }
 

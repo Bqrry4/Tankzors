@@ -51,4 +51,9 @@ public abstract class GameObject {
     {
         Existence = value;
     }
+
+    public void Destroy()
+    {
+        Existence = false;
+    }
 }

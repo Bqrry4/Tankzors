@@ -25,6 +25,9 @@ public class Scene implements IScene {
     //List of Layers
     List<Layer> layerList;
 
+    List<GameObject> objbuffer = new ArrayList<>();
+
+
 
     public Scene()
     {
@@ -44,8 +47,6 @@ public class Scene implements IScene {
     public void Process()
     {
 
-        Interaction();
-
         Update();
 
         Render();
@@ -55,14 +56,6 @@ public class Scene implements IScene {
     {
         size.x = w;
         size.y = h;
-    }
-
-    //Checking for interaction between objects
-    private void Interaction()
-    {
-        //Object with object
-//       Shellul ar trebui sa creeze explozii, exploziile de pe levvel dau damage//NU
-
     }
 
     private void Update()
@@ -85,6 +78,12 @@ public class Scene implements IScene {
 
             object.update();
         }
+
+        for(GameObject obj : objbuffer)
+        {
+            addObject(obj);
+        }
+        objbuffer.clear();
 
 
     }
@@ -113,11 +112,15 @@ public class Scene implements IScene {
         objectList.add(obj);
     }
 
+    @Override
+    public void addToBuffer(GameObject obj) {
+        objbuffer.add(obj);
+    }
+
     public void addObjectMediator(ObjectMediator med)
     {
         mediator = med;
     }
-
 
 
     @Override

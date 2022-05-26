@@ -1,9 +1,12 @@
 package game.menu;
 
+import Managers.InputHandler;
 import Managers.Renderer;
 import Managers.ResourceManager;
 import exceptions.ExitFromMenuEvent;
 import renderer.Texture;
+
+import static org.lwjgl.glfw.GLFW.GLFW_KEY_ENTER;
 
 //I fucking love dynamic programing // Kill me!
 
@@ -13,7 +16,7 @@ import renderer.Texture;
 
 
 public class Menu {
-    private boolean isActive; //Active or not
+    private boolean isActive = false; //Active or not
     MenuComponent root;
     MenuComponent active;
 
@@ -48,6 +51,12 @@ public class Menu {
     {
         isActive = value;
     }
+
+    public void SwitchTrigger()
+    {
+        isActive = !isActive;
+    }
+
     public void ActivateTrigger()
     {
         isActive = true;
